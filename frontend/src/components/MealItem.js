@@ -32,7 +32,13 @@ const MealItem = ({ mealName, loggedAt, calories, protein, carbs, fats }) => {
     <View style={styles.container}>
       {/* Header: Meal name + time */}
       <View style={styles.header}>
-        <Text style={styles.mealName}>{mealName}</Text>
+        <Text 
+          style={[styles.mealName, { flex: 1, marginRight: 8 }]} 
+          numberOfLines={1} 
+          ellipsizeMode="tail"
+        >
+          {mealName}
+        </Text>
         <Text style={styles.time}>{formatTime(loggedAt)}</Text>
       </View>
 

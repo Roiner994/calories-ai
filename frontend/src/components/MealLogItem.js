@@ -18,9 +18,19 @@ const MealLogItem = ({ meal, onPress }) => {
         <View style={styles.mealLogIcon}>
           <Text style={styles.mealLogEmoji}>{emoji}</Text>
         </View>
-        <View>
-          <Text style={styles.mealLogName}>{mealLabel}</Text>
-          <Text style={styles.mealLogTime}>
+        <View style={{ flex: 1 }}>
+          <Text 
+            style={styles.mealLogName} 
+            numberOfLines={1} 
+            ellipsizeMode="tail"
+          >
+            {mealLabel}
+          </Text>
+          <Text 
+            style={styles.mealLogTime}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {mealLabel} {timeLabel ? `• ${timeLabel}` : ''}
           </Text>
         </View>
@@ -51,6 +61,7 @@ const styles = StyleSheet.create({
   mealLogLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
     gap: 12,
   },
   mealLogIcon: {

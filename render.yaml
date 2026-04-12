@@ -28,4 +28,4 @@ services:
       - key: EXPO_PUBLIC_SUPABASE_URL
         value: https://nlyvrwqfvxzoesgmtacd.supabase.co
       - key: EXPO_PUBLIC_SUPABASE_ANON_KEY
-        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5seXZyd3Fmdnh6b2VzZ210YWNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2OTkzNzAsImV4cCI6MjA5MTI3NTM3MH0.C9VnQsfY-zTzylvxuSLwypXjDEVp6TWVMREPUH1FRlE
+        sync: false
