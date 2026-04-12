@@ -2,7 +2,7 @@ fastapi
 uvicorn
 supabase
 python-dotenv
-google-generativeai
+google-genai
 python-multipart
 pydantic-settings
 postgrest
