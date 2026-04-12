@@ -17,7 +17,7 @@ import { supabase } from './supabaseClient';
 //   - Physical device: use your machine's local IP (e.g., 'http://192.168.0.126:8000')
 // For production: replace with your deployed backend URL.
 // ---------------------------------------------------------------------------
-const API_BASE_URL = 'https://calories-ai-9lsp.onrender.com';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
