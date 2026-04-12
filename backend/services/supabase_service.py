@@ -18,6 +18,8 @@ def _get_client() -> Client:
     Uses the URL and anon key from environment variables.
     """
     settings = get_settings()
+    # Note: Use the Service Role Key here to bypass RLS policies in the backend. 
+    # User identity is already verified in the API layer.
     return create_client(settings.supabase_url, settings.supabase_key)
 
 

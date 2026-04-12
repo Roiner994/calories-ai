@@ -25,7 +25,7 @@ class Settings(BaseSettings):
 
     # --- Supabase ---
     supabase_url: str = ""
-    supabase_key: str = ""
+    supabase_key: str = ""  # Use the Service Role Key (secret) for server-side bypass of RLS
 
     # --- App ---
     app_name: str = "VisionMacro API"

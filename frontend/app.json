@@ -26,6 +26,17 @@
     },
     "plugins": [
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6c725a76-81c6-4d0d-a864-ae452b2e68f3"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/6c725a76-81c6-4d0d-a864-ae452b2e68f3"
+    }
   }
 }

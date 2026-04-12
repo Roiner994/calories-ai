@@ -67,24 +67,45 @@ const TabNavigator = ({ navigation }) => {
     isPickerActive.current = true;
 
     try {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== 'granted') {
+      const { status: existingStatus } = await ImagePicker.getCameraPermissionsAsync();
+      let finalStatus = existingStatus;
+      
+      if (existingStatus !== 'granted') {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        finalStatus = status;
+      }
+
+      if (finalStatus !== 'granted') {
         Alert.alert(t('permissions.title'), t('permissions.camera'));
+        isPickerActive.current = false;
         return;
       }
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ['images'],
-        allowsEditing: false, // Changed from true to allow full image
-        quality: 0.8,
-      });
-      if (!result.canceled && result.assets?.[0]?.uri) {
-        setModalVisible(false);
-        navigation.navigate('ImagePreview', { imageUri: result.assets[0].uri });
-      }
+
+      // Close the modal FIRST so the iOS view controller hierarchy is clean
+      setModalVisible(false);
+      
+      // Delay picker launch to allow Modal to dismiss completely on iOS
+      setTimeout(async () => {
+        try {
+          const result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ['images'],
+            allowsEditing: false, // Changed from true to allow full image
+            quality: 0.8,
+          });
+          if (!result.canceled && result.assets?.[0]?.uri) {
+            navigation.navigate('ImagePreview', { imageUri: result.assets[0].uri });
+          }
+        } catch (error) {
+          Alert.alert(t('permissions.error_title'), t('permissions.camera_error'));
+          console.error('Camera error:', error);
+        } finally {
+          isPickerActive.current = false;
+        }
+      }, 500);
+
     } catch (error) {
       Alert.alert(t('permissions.error_title'), t('permissions.camera_error'));
-      console.error('Camera error:', error);
-    } finally {
+      console.error('Permission error:', error);
       isPickerActive.current = false;
     }
   };
@@ -95,24 +116,45 @@ const TabNavigator = ({ navigation }) => {
     isPickerActive.current = true;
 
     try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
+      const { status: existingStatus } = await ImagePicker.getMediaLibraryPermissionsAsync();
+      let finalStatus = existingStatus;
+
+      if (existingStatus !== 'granted') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        finalStatus = status;
+      }
+
+      if (finalStatus !== 'granted') {
         Alert.alert(t('permissions.title'), t('permissions.gallery'));
+        isPickerActive.current = false;
         return;
       }
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
-        allowsEditing: false, // Changed from true to allow full image
-        quality: 0.8,
-      });
-      if (!result.canceled && result.assets?.[0]?.uri) {
-        setModalVisible(false);
-        navigation.navigate('ImagePreview', { imageUri: result.assets[0].uri });
-      }
+
+      // Close the modal FIRST so the iOS view controller hierarchy is clean
+      setModalVisible(false);
+
+      // Delay picker launch to allow Modal to dismiss completely on iOS
+      setTimeout(async () => {
+        try {
+          const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: false, // Changed from true to allow full image
+            quality: 0.8,
+          });
+          if (!result.canceled && result.assets?.[0]?.uri) {
+            navigation.navigate('ImagePreview', { imageUri: result.assets[0].uri });
+          }
+        } catch (error) {
+          Alert.alert(t('permissions.error_title'), t('permissions.gallery_error'));
+          console.error('Gallery error:', error);
+        } finally {
+          isPickerActive.current = false;
+        }
+      }, 500);
+
     } catch (error) {
       Alert.alert(t('permissions.error_title'), t('permissions.gallery_error'));
-      console.error('Gallery error:', error);
-    } finally {
+      console.error('Permission error:', error);
       isPickerActive.current = false;
     }
   };
