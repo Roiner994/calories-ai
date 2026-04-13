@@ -24,7 +24,7 @@ services:
     publishDir: dist
     envVars:
       - key: EXPO_PUBLIC_API_URL
-        value: https://calories-ai-backend.onrender.com
+        value: https://calories-ai-9lsp.onrender.com
       - key: EXPO_PUBLIC_SUPABASE_URL
         value: https://nlyvrwqfvxzoesgmtacd.supabase.co
       - key: EXPO_PUBLIC_SUPABASE_ANON_KEY

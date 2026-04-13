@@ -141,7 +141,7 @@ async def analyze_meal(
     except Exception as e:
         raise HTTPException(
             status_code=502,
-            detail=f"OpenAI analysis failed: {str(e)}",
+            detail=f"Gemini analysis failed: {str(e)}",
         )
 
     # Extract the ingredients list from the AI response
