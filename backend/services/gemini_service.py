@@ -134,7 +134,7 @@ def analyze_food_image(image_base64: str, language: str = "es") -> dict:
     # Generate content using gemini-2.0-flash (free tier, fast)
     try:
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-3.1-flash-lite-preview",
             contents=[final_prompt, image_part],
         )
     except Exception as e:
@@ -142,7 +142,7 @@ def analyze_food_image(image_base64: str, language: str = "es") -> dict:
         if "429" in str(e) or "quota" in str(e).lower():
             print(f"[GeminiService] Quota hit for 2.0-flash. Falling back to 1.5-flash. Error: {e}")
             response = client.models.generate_content(
-                model="gemini-1.5-flash",
+                model="gemini-2.0-flash",
                 contents=[final_prompt, image_part],
             )
         else:
@@ -199,14 +199,14 @@ def refine_food_analysis(ingredients: list, feedback: str, language: str = "es")
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-3.1-flash-lite-preview",
             contents=[final_prompt],
         )
     except Exception as e:
         if "429" in str(e) or "quota" in str(e).lower():
             print(f"[GeminiService] Quota hit for 2.0-flash. Falling back to 1.5-flash. Error: {e}")
             response = client.models.generate_content(
-                model="gemini-1.5-flash",
+                model="gemini-2.0-flash",
                 contents=[final_prompt],
             )
         else:
