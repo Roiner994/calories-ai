@@ -61,17 +61,46 @@ from services.supabase_service import (
 
 security = HTTPBearer()
 
+import time
+
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
-    """Verifies the Supabase JWT and returns the user's UUID."""
+    """Verifies the Supabase JWT and returns the user's UUID. Includes retry logic for flakiness."""
     token = credentials.credentials
-    try:
-        client = _get_client()
-        user_response = client.auth.get_user(token)
-        if not user_response or not user_response.user:
-            raise HTTPException(status_code=401, detail="Invalid authentication credentials")
-        return user_response.user.id
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Authentication failed: {str(e)}")
+    max_retries = 5  # Increased retries
+    retry_delay = 1.0 # start with 1s
+    
+    last_error = None
+    for attempt in range(max_retries):
+        try:
+            client = _get_client()
+            # Note: We use a basic try/except here as the SDK method can block or raise
+            user_response = client.auth.get_user(token)
+            
+            if not user_response or not user_response.user:
+                raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+                
+            return user_response.user.id
+            
+        except HTTPException:
+            raise
+        except Exception as e:
+            last_error = e
+            error_str = str(e).lower()
+            # If it's a timeout or connection issue, retry
+            is_transient = any(kw in error_str for kw in ["timed out", "timeout", "connection", "network", "remote end"])
+            
+            if attempt < max_retries - 1 and is_transient:
+                print(f"Auth attempt {attempt+1} failed ({type(e).__name__}), retrying in {retry_delay}s...")
+                time.sleep(retry_delay)
+                retry_delay *= 1.5 # Moderate backoff
+                continue
+            
+            # If we're here, we've exhausted retries or it's a non-transient error
+            print(f"Auth FINAL ERROR after {attempt+1} attempts: {str(e)}")
+            raise HTTPException(
+                status_code=401, 
+                detail=f"Authentication failed after {attempt+1} attempts. Please check your connection. Error: {str(e)}"
+            )
 
 
 settings = get_settings()
@@ -117,13 +146,13 @@ async def analyze_meal(
     user_id: str = Depends(get_current_user)
 ):
     """
-    Accepts an uploaded food image, sends it to GPT-4o for ingredient
-    identification, then queries Edamam for nutritional data.
+    Accepts an uploaded food image, sends it to AI for ingredient
+    identification, then aggregates nutritional data.
 
     The full pipeline:
       1. Read and encode the image as base64.
-      2. Send to GPT-4o Vision → get ingredient list + estimated weights.
-      3. For each ingredient, query Edamam → get calories, protein, carbs, fats.
+      2. Send to AI Vision → get ingredient list + estimated weights.
+      3. For each ingredient, aggregate calories, protein, carbs, fats.
       4. Aggregate totals and return the unified result.
     """
     # --- Step 1: Read and encode the uploaded image ---
@@ -133,7 +162,7 @@ async def analyze_meal(
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to read image: {str(e)}")
 
-    # --- Step 2: Analyze with GPT-4o ---
+    # --- Step 2: Analyze with AI ---
     try:
         user_settings = get_user_settings(user_id)
         language = user_settings.get("language", "es")
@@ -141,7 +170,7 @@ async def analyze_meal(
     except Exception as e:
         raise HTTPException(
             status_code=502,
-            detail=f"OpenAI analysis failed: {str(e)}",
+            detail=f"AI analysis failed: {str(e)}",
         )
 
     # Extract the ingredients list from the AI response

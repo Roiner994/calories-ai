@@ -133,7 +133,7 @@ const DailySummaryScreen = () => {
   // Render
   // ---------------------------------------------------------------------------
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar style="light" />
 
       <ScreenHeader
@@ -260,7 +260,7 @@ const DailySummaryScreen = () => {
           )}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

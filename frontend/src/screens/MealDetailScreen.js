@@ -108,7 +108,7 @@ const MealDetailScreen = ({ route, navigation }) => {
   const emoji = getMealEmoji(mealLabel);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar style="light" />
 
       <ScreenHeader
@@ -278,7 +278,7 @@ const MealDetailScreen = ({ route, navigation }) => {
         onDelete={handleConfirmDelete}
         isDeleting={isDeleting}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

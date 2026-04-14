@@ -9,6 +9,8 @@ estimated weights, and hidden cooking fats.
 import json
 import base64
 import io
+import time
+import random
 
 from google import genai
 from google.genai import types
@@ -99,6 +101,30 @@ Important rules:
 - Keep the format exactly the same.
 - Return ONLY the JSON object. No other text.
 """
+# ---------------------------------------------------------------------------
+# Helpers for robust AI calls
+# ---------------------------------------------------------------------------
+
+def _generate_with_retry(client, model, contents, max_retries=3):
+    """
+    Calls Gemini with exponential backoff for transient errors (503, 429).
+    """
+    last_err = None
+    for attempt in range(max_retries):
+        try:
+            return client.models.generate_content(model=model, contents=contents)
+        except Exception as e:
+            last_err = e
+            msg = str(e).lower()
+            # Retry on service unavailable (503), rate limits (429), or internal errors (500)
+            if any(code in msg for code in ["503", "429", "500", "unavailable", "quota", "overloaded"]):
+                wait = (2 ** attempt) + random.random()
+                print(f"[GeminiService] Transient error on {model}: {e}. Retrying in {wait:.1f}s...")
+                time.sleep(wait)
+            else:
+                # Fatal error, don't retry
+                raise e
+    raise last_err
 
 
 
@@ -131,22 +157,22 @@ def analyze_food_image(image_base64: str, language: str = "es") -> dict:
     lang_name = "Spanish" if language.lower() == "es" else "English"
     final_prompt = f"{ANALYSIS_PROMPT}\n\nCRITICAL: Please provide the meal_name, ingredient names, and notes translated into {lang_name}."
 
-    # Generate content using gemini-2.0-flash (free tier, fast)
+    # Generate content using gemini-flash-latest (evergreen alias)
+    # We fallback to gemini-pro-latest if flash is failing repeatedly
     try:
-        response = client.models.generate_content(
-            model="gemini-3.1-flash-lite-preview",
+        response = _generate_with_retry(
+            client=client,
+            model="gemini-flash-latest",
             contents=[final_prompt, image_part],
         )
     except Exception as e:
-        # If we hit quota or rate limits, fallback to Gemini 1.5 Flash
-        if "429" in str(e) or "quota" in str(e).lower():
-            print(f"[GeminiService] Quota hit for 2.0-flash. Falling back to 1.5-flash. Error: {e}")
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=[final_prompt, image_part],
-            )
-        else:
-            raise e
+        print(f"[GeminiService] Primary model failed. Trying pro fallback. Error: {e}")
+        response = _generate_with_retry(
+            client=client,
+            model="gemini-pro-latest",
+            contents=[final_prompt, image_part],
+        )
+
 
     # Extract the raw text content from the AI response
     raw_content = response.text.strip()
@@ -198,19 +224,18 @@ def refine_food_analysis(ingredients: list, feedback: str, language: str = "es")
     final_prompt = f"{prompt}\n\nCRITICAL: Please provide the updated meal_name, ingredient names, and notes translated into {lang_name}."
 
     try:
-        response = client.models.generate_content(
-            model="gemini-3.1-flash-lite-preview",
+        response = _generate_with_retry(
+            client=client,
+            model="gemini-flash-latest",
             contents=[final_prompt],
         )
     except Exception as e:
-        if "429" in str(e) or "quota" in str(e).lower():
-            print(f"[GeminiService] Quota hit for 2.0-flash. Falling back to 1.5-flash. Error: {e}")
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=[final_prompt],
-            )
-        else:
-            raise e
+        print(f"[GeminiService] Primary model failed for refinement. Trying pro fallback. Error: {e}")
+        response = _generate_with_retry(
+            client=client,
+            model="gemini-pro-latest",
+            contents=[final_prompt],
+        )
 
     raw_content = response.text.strip()
 

@@ -29,9 +29,16 @@ const apiClient = axios.create({
 
 // Add interceptor to inject Authorization header with Supabase JWT
 apiClient.interceptors.request.use(async (config) => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session && session.access_token) {
-    config.headers.Authorization = `Bearer ${session.access_token}`;
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session && session.access_token) {
+      // console.log(`API Request: ${config.method?.toUpperCase()} ${config.url} [Token Present]`);
+      config.headers.Authorization = `Bearer ${session.access_token}`;
+    } else {
+      console.warn(`API Request: ${config.method?.toUpperCase()} ${config.url} [NO TOKEN FOUND]`);
+    }
+  } catch (err) {
+    console.error('Error fetching session for API request:', err);
   }
   return config;
 }, (error) => {

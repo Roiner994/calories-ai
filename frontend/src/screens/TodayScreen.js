@@ -164,7 +164,7 @@ const TodayScreen = ({ navigation }) => {
         centerTitle={false}
         titleStyle={[styles.headerTitle, !isToday(selectedDate) && styles.headerTitleSub]}
         rightElement={
-          <View style={{ flexDirection: 'row', gap: 10 }}>
+          <View style={styles.headerRight}>
             <TouchableOpacity
               style={styles.headerIconButton}
               onPress={() => setShowDatePicker(true)}
@@ -301,6 +301,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#2A2A3E',
   },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
 
   // Calendar strip
   calendarStrip: {
@@ -403,6 +408,7 @@ const styles = StyleSheet.create({
   mealLogLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
     gap: 12,
   },
   mealLogIcon: {

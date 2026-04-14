@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
 
 const ScreenHeader = ({ 
@@ -11,17 +12,24 @@ const ScreenHeader = ({
   centerTitle = true,
   titleStyle,
 }) => {
-  // Safe area handling for Android
-  const statusBarHeight = Platform.OS === 'android' ? StatusBar.currentHeight : 0;
+  const insets = useSafeAreaInsets();
   
-  const paddingTop = Platform.OS === 'android' ? statusBarHeight + 12 : 12;
+  // Standard header height logic: Safe area + 56px content area
+  const HEADER_CONTENT_HEIGHT = 56;
+
+  const hasLeft = !!(leftElement || onBack);
+  const hasRight = !!rightElement;
 
   const renderLeft = () => {
     if (leftElement) return leftElement;
     if (onBack) {
       return (
-        <TouchableOpacity onPress={onBack} style={styles.backButton}>
-          <ChevronLeft color="#FFFFFF" size={28} />
+        <TouchableOpacity 
+          onPress={onBack} 
+          style={styles.backButton}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <ChevronLeft color="#FFFFFF" size={28} strokeWidth={2.5} />
         </TouchableOpacity>
       );
     }
@@ -29,12 +37,24 @@ const ScreenHeader = ({
   };
 
   return (
-    <View style={[styles.container, { paddingTop }]}>
-      <View style={styles.actionContainer}>
+    <View style={[
+      styles.container, 
+      { 
+        height: HEADER_CONTENT_HEIGHT + insets.top,
+        paddingTop: insets.top 
+      }
+    ]}>
+      {/* Left Action */}
+      <View style={[styles.actionContainer, !hasLeft && styles.hiddenContainer]}>
         {renderLeft()}
       </View>
       
-      <View style={[styles.titleContainer, !centerTitle && styles.leftAlignedTitle]}>
+      {/* Title */}
+      <View style={[
+        styles.titleContainer, 
+        !centerTitle && styles.leftAlignedTitle,
+        !hasLeft && !centerTitle && { paddingLeft: 16 }
+      ]}>
         {titleElement ? (
           titleElement
         ) : (
@@ -44,7 +64,8 @@ const ScreenHeader = ({
         )}
       </View>
       
-      <View style={[styles.actionContainer, styles.rightAction]}>
+      {/* Right Action */}
+      <View style={[styles.actionContainer, !hasRight && styles.hiddenContainer]}>
         {rightElement || null}
       </View>
     </View>
@@ -55,38 +76,41 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingBottom: 12,
     backgroundColor: '#0D0D1A',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
   },
   actionContainer: {
-    width: 60,
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 10,
   },
-  rightAction: {
-    alignItems: 'flex-end',
+  hiddenContainer: {
+    width: 0,
+    minWidth: 0,
+    overflow: 'hidden',
   },
   titleContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 8,
   },
   leftAlignedTitle: {
     alignItems: 'flex-start',
-    marginLeft: -20, // Adjust to balance the space if needed
+    paddingLeft: 4,
   },
   title: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
     color: '#FFFFFF',
-    textAlign: 'center',
+    letterSpacing: -0.3,
   },
   backButton: {
-    marginLeft: -4,
-  },
-  placeholder: {
-    width: 28,
+    padding: 4,
   },
 });
 

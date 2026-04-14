@@ -162,7 +162,7 @@ const ResultScreen = ({ route, navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar style="light" />
 
       <ScreenHeader 
@@ -361,7 +361,7 @@ const ResultScreen = ({ route, navigation }) => {
 
       {/* ── Success Modal ─────────────────────────────────────────── */}
       <SuccessModal visible={showSuccess} onHome={goToHome} />
-    </SafeAreaView>
+    </View>
   );
 };
 

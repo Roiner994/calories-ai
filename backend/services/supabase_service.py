@@ -12,15 +12,34 @@ from supabase import create_client, Client
 from core.config import get_settings
 
 
+from supabase import create_client, Client, ClientOptions
+
+
+_SUPABASE_CLIENT: Optional[Client] = None
+
 def _get_client() -> Client:
     """
-    Creates and returns a Supabase client instance.
+    Creates and returns a Supabase client instance (Singleton).
     Uses the URL and anon key from environment variables.
     """
+    global _SUPABASE_CLIENT
+    if _SUPABASE_CLIENT is not None:
+        return _SUPABASE_CLIENT
+
     settings = get_settings()
-    # Note: Use the Service Role Key here to bypass RLS policies in the backend. 
-    # User identity is already verified in the API layer.
-    return create_client(settings.supabase_url, settings.supabase_key)
+    # Increase timeout to handle persistent network issues in auth verification
+    options = ClientOptions(
+        postgrest_client_timeout=60, 
+        storage_client_timeout=60,
+        schema="public"
+    )
+    
+    _SUPABASE_CLIENT = create_client(
+        settings.supabase_url, 
+        settings.supabase_key,
+        options=options
+    )
+    return _SUPABASE_CLIENT
 
 
 # =============================================================================

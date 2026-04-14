@@ -58,7 +58,7 @@ const ImagePreviewScreen = ({ route, navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar style="light" />
       
       {/* Header */}
@@ -108,7 +108,7 @@ const ImagePreviewScreen = ({ route, navigation }) => {
       </View>
 
       <LoadingOverlay visible={isAnalyzing} message={t('preview.analyzing')} />
-    </SafeAreaView>
+    </View>
   );
 };
 
