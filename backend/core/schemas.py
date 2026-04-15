@@ -60,6 +60,7 @@ class LogMealRequest(BaseModel):
     totals: MacroBreakdown
     ai_notes: Optional[str] = None
     image_base64: Optional[str] = Field(None, description="Optional base64 thumbnail for the meal log")
+    logged_at: Optional[str] = Field(None, description="Optional ISO timestamp for the meal log")
 
 
 class RefineMealRequest(BaseModel):
@@ -157,6 +158,7 @@ class ManualLogMealRequest(BaseModel):
     protein_g: float = Field(0, description="Protein in grams (optional)")
     carbs_g: float = Field(0, description="Carbs in grams (optional)")
     fats_g: float = Field(0, description="Fats in grams (optional)")
+    logged_at: Optional[str] = Field(None, description="Optional ISO timestamp for the meal log")
 
 
 # =============================================================================

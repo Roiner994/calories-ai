@@ -74,6 +74,7 @@ def save_meal(
     user_id: str,
     ai_notes: Optional[str] = None,
     image_base64: Optional[str] = None,
+    logged_at: Optional[str] = None,
 ) -> dict:
     """
     Inserts a new meal log into the Supabase 'meal_logs' table.
@@ -88,6 +89,7 @@ def save_meal(
         user_id:      The UUID of the authenticated user.
         ai_notes:     Optional notes from the AI analysis.
         image_base64: Optional base64 thumbnail of the meal.
+        logged_at:    Optional ISO timestamp for the meal log.
 
     Returns:
         The inserted row as a dict (includes generated 'id' and 'logged_at').
@@ -104,7 +106,7 @@ def save_meal(
         "fats_g": round(fats_g, 1),
         "ai_notes": ai_notes,
         "image_base64": image_base64,
-        "logged_at": datetime.utcnow().isoformat(),
+        "logged_at": logged_at or datetime.utcnow().isoformat(),
     }
 
     # Insert and return the created row

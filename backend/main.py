@@ -325,6 +325,7 @@ async def log_meal(
             user_id=user_id,
             ai_notes=payload.ai_notes,
             image_base64=payload.image_base64,
+            logged_at=payload.logged_at,
         )
 
         return LogMealResponse(
@@ -368,6 +369,7 @@ async def log_meal_manual(
             fats_g=payload.fats_g,
             user_id=user_id,
             ai_notes="Manually entered meal",
+            logged_at=payload.logged_at,
         )
 
         return LogMealResponse(

@@ -21,9 +21,11 @@ import {
 import { logMealManual } from '../services/api';
 import ScreenHeader from '../components/ScreenHeader';
 import { useTranslation } from 'react-i18next';
+import { useDate } from '../context/DateContext';
 
 const ManualEntryScreen = ({ navigation }) => {
   const { t } = useTranslation();
+  const { selectedDate } = useDate();
   const [mealName, setMealName] = useState('');
   const [calories, setCalories] = useState('');
   const [protein, setProtein] = useState('');
@@ -49,6 +51,7 @@ const ManualEntryScreen = ({ navigation }) => {
         protein_g: parseFloat(protein) || 0,
         carbs_g: parseFloat(carbs) || 0,
         fats_g: parseFloat(fats) || 0,
+        logged_at: selectedDate.toISOString(),
       });
 
       if (result.success) {

@@ -35,16 +35,14 @@ import { isToday, isSameDay, formatDateForAPI } from '../utils/dateUtils';
 import ScreenHeader from '../components/ScreenHeader';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTranslation } from 'react-i18next';
+import { useDate } from '../context/DateContext';
 
 const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const TodayScreen = ({ navigation }) => {
   const { t } = useTranslation();
-  // ---------------------------------------------------------------------------
-  // State
-  // ---------------------------------------------------------------------------
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const { selectedDate, setSelectedDate } = useDate();
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

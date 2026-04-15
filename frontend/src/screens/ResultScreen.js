@@ -38,6 +38,7 @@ import ScreenHeader from '../components/ScreenHeader';
 import DeconstructionCard from '../components/DeconstructionCard';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { useTranslation } from 'react-i18next';
+import { useDate } from '../context/DateContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -47,6 +48,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const ResultScreen = ({ route, navigation }) => {
   const { t } = useTranslation();
+  const { selectedDate } = useDate();
   const { analysis, imageUri } = route.params || {};
   const { ingredients = [], totals = {}, ai_notes } = analysis || {};
 
@@ -142,6 +144,7 @@ const ResultScreen = ({ route, navigation }) => {
         ingredients: ingredientsList,
         totals: currentTotals,
         ai_notes: aiNotes,
+        logged_at: selectedDate.toISOString(),
       });
       if (result.success) {
         setSaved(true);
