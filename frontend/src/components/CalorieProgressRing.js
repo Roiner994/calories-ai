@@ -1,55 +1,93 @@
 /**
- * CalorieProgressRing.js — SVG-based circular progress ring.
+ * CalorieProgressRing.js — Animated SVG progress ring (Reanimated v3).
  *
- * Displays consumed vs. goal calories in an animated ring.
- * Used prominently on the Today screen dashboard.
+ * Animates the ring arc on mount/value change entirely on the UI thread.
+ * A JS-side counter animates the displayed calorie number.
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+import Animated, {
+  useSharedValue,
+  useAnimatedProps,
+  withTiming,
+  Easing,
+  runOnJS,
+} from 'react-native-reanimated';
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const CalorieProgressRing = ({
   consumed = 0,
   goal = 2000,
   size = 200,
-  strokeWidth = 12,
+  strokeWidth = 14,
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const progress = Math.min(consumed / goal, 1); // Cap at 100%
-  const strokeDashoffset = circumference - (progress * circumference);
-  const remaining = Math.max(goal - consumed, 0);
+  const progress = Math.min(consumed / goal, 1);
 
-  // Determine ring color based on progress
-  const getProgressColor = () => {
-    if (progress >= 1) return '#FF6B6B'; // Over goal — red
-    if (progress >= 0.85) return '#FFD93D'; // Close — amber
-    return '#4ECDC4'; // Good — teal/green
-  };
+  // Animated value for the stroke offset (UI thread)
+  const animatedProgress = useSharedValue(0);
+  // JS-side counter for the displayed number
+  const [displayedCalories, setDisplayedCalories] = useState(0);
+
+  useEffect(() => {
+    animatedProgress.value = 0;
+    animatedProgress.value = withTiming(progress, {
+      duration: 900,
+      easing: Easing.out(Easing.exp),
+    });
+
+    // Animate the number counter on the JS side
+    const steps = 40;
+    const stepDuration = 900 / steps;
+    let currentStep = 0;
+    const interval = setInterval(() => {
+      currentStep++;
+      const easedProgress = 1 - Math.pow(1 - currentStep / steps, 3);
+      setDisplayedCalories(Math.round(easedProgress * consumed));
+      if (currentStep >= steps) clearInterval(interval);
+    }, stepDuration);
+
+    return () => clearInterval(interval);
+  }, [consumed]);
+
+  const animatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: circumference * (1 - animatedProgress.value),
+  }));
+
+  const remaining = Math.max(goal - consumed, 0);
+  const isOver = consumed > goal;
+
+  const ringColor = isOver ? '#FF6B6B' : '#4A9EFF';
+  const statusLabel = isOver
+    ? `${Math.round(consumed - goal)} over`
+    : `${Math.round(remaining)} left`;
 
   return (
     <View style={styles.container}>
-      <Svg width={size} height={size}>
-        {/* Background ring */}
+      <Svg width={size} height={size} style={styles.svg}>
+        {/* Track circle */}
         <Circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#2A2A3E"
+          stroke="#1E1E38"
           strokeWidth={strokeWidth}
-          fill="transparent"
+          fill="none"
         />
-        {/* Progress ring */}
-        <Circle
+        {/* Animated progress arc */}
+        <AnimatedCircle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={getProgressColor()}
+          stroke={ringColor}
           strokeWidth={strokeWidth}
-          fill="transparent"
+          fill="none"
           strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
+          animatedProps={animatedProps}
           strokeLinecap="round"
           rotation="-90"
           origin={`${size / 2}, ${size / 2}`}
@@ -57,13 +95,13 @@ const CalorieProgressRing = ({
       </Svg>
 
       {/* Center text overlay */}
-      <View style={[styles.centerContent, { width: size, height: size }]}>
-        <Text style={styles.consumedValue}>
-          {Math.round(consumed).toLocaleString()}
+      <View style={[styles.centerOverlay, { width: size, height: size }]}>
+        <Text style={[styles.calorieNumber, { color: ringColor }]}>
+          {displayedCalories.toLocaleString()}
         </Text>
-        <Text style={styles.consumedUnit}>
-          / {Math.round(goal).toLocaleString()} kcal
-        </Text>
+        <Text style={styles.calorieUnit}>kcal</Text>
+        <Text style={styles.statusLabel}>{statusLabel}</Text>
+        <Text style={styles.goalLabel}>of {goal.toLocaleString()} goal</Text>
       </View>
     </View>
   );
@@ -71,26 +109,38 @@ const CalorieProgressRing = ({
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  centerContent: {
+  svg: {
     position: 'absolute',
+  },
+  centerOverlay: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  consumedValue: {
-    fontSize: 36,
-    fontWeight: '900',
-    color: '#FFFFFF',
+  calorieNumber: {
+    fontSize: 42,
+    fontWeight: '800',
+    letterSpacing: -1,
     fontVariant: ['tabular-nums'],
   },
-  consumedUnit: {
+  calorieUnit: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#8888AA',
+    marginTop: -4,
+  },
+  statusLabel: {
     fontSize: 13,
+    fontWeight: '600',
+    color: '#CCCCDD',
+    marginTop: 6,
+  },
+  goalLabel: {
+    fontSize: 11,
     color: '#8888AA',
     marginTop: 2,
-    fontVariant: ['tabular-nums'],
   },
 });
 

@@ -1,44 +1,36 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Utensils } from 'lucide-react-native';
 import { formatMealTime } from '../utils/dateUtils';
-import { getMealTypeLabel, getMealEmoji } from '../utils/mealUtils';
+import { getMealTypeLabel } from '../utils/mealUtils';
 
 const MealLogItem = ({ meal, onPress }) => {
   const mealLabel = getMealTypeLabel(meal.meal_name, meal.logged_at);
   const timeLabel = formatMealTime(meal.logged_at);
-  const emoji = getMealEmoji(mealLabel);
 
   return (
-    <TouchableOpacity 
-      style={styles.mealLogItem} 
-      onPress={onPress} 
+    <TouchableOpacity
+      style={styles.mealLogItem}
+      onPress={onPress}
       activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={`${mealLabel}, ${Math.round(meal.calories)} calories`}
     >
       <View style={styles.mealLogLeft}>
         <View style={styles.mealLogIcon}>
-          <Text style={styles.mealLogEmoji}>{emoji}</Text>
+          <Utensils color="#8888AA" size={20} strokeWidth={1.8} />
         </View>
         <View style={{ flex: 1 }}>
-          <Text 
-            style={styles.mealLogName} 
-            numberOfLines={1} 
-            ellipsizeMode="tail"
-          >
+          <Text style={styles.mealLogName} numberOfLines={1} ellipsizeMode="tail">
             {mealLabel}
           </Text>
-          <Text 
-            style={styles.mealLogTime}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            {mealLabel} {timeLabel ? `• ${timeLabel}` : ''}
+          <Text style={styles.mealLogTime} numberOfLines={1} ellipsizeMode="tail">
+            {timeLabel || '—'}
           </Text>
         </View>
       </View>
       <View style={styles.mealLogRight}>
-        <Text style={styles.mealLogCalories}>
-          {Math.round(meal.calories)}
-        </Text>
+        <Text style={styles.mealLogCalories}>{Math.round(meal.calories)}</Text>
         <Text style={styles.mealLogCalUnit}>kcal</Text>
       </View>
     </TouchableOpacity>
@@ -71,9 +63,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#1E1E38',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  mealLogEmoji: {
-    fontSize: 22,
   },
   mealLogName: {
     fontSize: 15,

@@ -2,12 +2,13 @@
  * TodayScreen.js — Main dashboard for VisionMacro.
  *
  * Features:
- *   - Horizontal calendar strip (week view)
- *   - Calorie progress ring with goal tracking
- *   - Macro progress bars (Protein, Carbs, Fats)
+ *   - Horizontal calendar strip (week view) with prev/next week navigation
+ *   - Calorie progress ring with animated fill
+ *   - Macro progress bars (Protein, Carbs, Fats) with animation
  *   - Today's meal log with edit capability
  *   - Pull-to-refresh
  *   - Native date picker for quick date navigation
+ *   - Empty state with CTA to log a meal (via ModalContext)
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -21,11 +22,17 @@ import {
   ActivityIndicator,
   RefreshControl,
   Alert,
-  SafeAreaView,
   Dimensions,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { Settings, User, Calendar as CalendarIcon } from 'lucide-react-native';
+import {
+  User,
+  Calendar as CalendarIcon,
+  Leaf,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+} from 'lucide-react-native';
 import CalorieProgressRing from '../components/CalorieProgressRing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDailySummary, getUserSettings } from '../services/api';
@@ -36,45 +43,69 @@ import ScreenHeader from '../components/ScreenHeader';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTranslation } from 'react-i18next';
 import { useDate } from '../context/DateContext';
+import { useModal } from '../context/ModalContext';
 
 const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
+// ---------------------------------------------------------------------------
+// Helper: get Monday of the week containing `date`
+// ---------------------------------------------------------------------------
+const getMondayOf = (date) => {
+  const d = new Date(date);
+  const day = d.getDay(); // 0 = Sunday
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
 const TodayScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const { selectedDate, setSelectedDate } = useDate();
+  const { openLogMeal } = useModal();
+
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [calorieGoal, setCalorieGoal] = useState(2000);
   const [weekDates, setWeekDates] = useState([]);
+  const [weekOffset, setWeekOffset] = useState(0); // 0 = current week
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   // ---------------------------------------------------------------------------
-  // Helpers
+  // Generate week dates from weekOffset relative to today's week
   // ---------------------------------------------------------------------------
-
-  // Generate week dates around selected date
   useEffect(() => {
-    const dates = [];
-    const tempDate = new Date(selectedDate);
-    const day = tempDate.getDay();
-    // Monday = 1, Sunday = 0. To get Monday:
-    const diff = tempDate.getDate() - day + (day === 0 ? -6 : 1);
-    const startOfWeek = new Date(tempDate.setDate(diff));
-
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(startOfWeek);
-      d.setDate(startOfWeek.getDate() + i);
-      dates.push(d);
-    }
+    const baseMonday = getMondayOf(new Date());
+    baseMonday.setDate(baseMonday.getDate() + weekOffset * 7);
+    const dates = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(baseMonday);
+      d.setDate(baseMonday.getDate() + i);
+      return d;
+    });
     setWeekDates(dates);
-  }, [selectedDate]);
+  }, [weekOffset]);
+
+  // When weekOffset changes and the selectedDate is not in the visible week,
+  // auto-select Monday of the new week
+  useEffect(() => {
+    if (weekDates.length === 0) return;
+    const inWeek = weekDates.some(d => isSameDay(d, selectedDate));
+    if (!inWeek) {
+      setSelectedDate(new Date(weekDates[0]));
+    }
+  }, [weekDates]);
 
   const onDateChange = (event, date) => {
     setShowDatePicker(false);
     if (date) {
       setSelectedDate(date);
+      // Jump weekOffset so the calendar shows the week of the picked date
+      const baseMonday = getMondayOf(new Date());
+      const pickedMonday = getMondayOf(date);
+      const diffDays = Math.round((pickedMonday - baseMonday) / (7 * 24 * 60 * 60 * 1000));
+      setWeekOffset(diffDays);
       setLoading(true);
     }
   };
@@ -85,17 +116,14 @@ const TodayScreen = ({ navigation }) => {
 
   const fetchData = useCallback(async () => {
     try {
-      // 1. Try to load custom goal from AsyncStorage first (Works even without DB)
       const localGoal = await AsyncStorage.getItem('user_calorie_goal');
       if (localGoal) {
         setCalorieGoal(parseFloat(localGoal));
       }
 
-      // 2. Fetch daily summary from backend
       const summaryData = await getDailySummary(formatDateForAPI(selectedDate));
       setSummary(summaryData);
 
-      // 3. Try to sync with backend settings if possible
       try {
         const settingsData = await getUserSettings();
         if (settingsData.daily_calorie_goal && !localGoal) {
@@ -120,7 +148,6 @@ const TodayScreen = ({ navigation }) => {
     }
   }, [selectedDate]);
 
-  // Refresh when screen comes into focus (e.g., after logging a meal)
   useFocusEffect(
     useCallback(() => {
       fetchData();
@@ -158,7 +185,15 @@ const TodayScreen = ({ navigation }) => {
       <StatusBar style="light" />
 
       <ScreenHeader
-        title={isToday(selectedDate) ? t('today.title') : selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+        title={
+          isToday(selectedDate)
+            ? t('today.title')
+            : selectedDate.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+              })
+        }
         centerTitle={false}
         titleStyle={[styles.headerTitle, !isToday(selectedDate) && styles.headerTitleSub]}
         rightElement={
@@ -166,12 +201,16 @@ const TodayScreen = ({ navigation }) => {
             <TouchableOpacity
               style={styles.headerIconButton}
               onPress={() => setShowDatePicker(true)}
+              accessibilityLabel="Select date"
+              accessibilityRole="button"
             >
               <CalendarIcon color="#FFFFFF" size={20} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.headerIconButton}
               onPress={() => navigation.navigate('Settings')}
+              accessibilityLabel="Open settings"
+              accessibilityRole="button"
             >
               <User color="#FFFFFF" size={20} />
             </TouchableOpacity>
@@ -179,42 +218,62 @@ const TodayScreen = ({ navigation }) => {
         }
       />
 
-      {/* Calendar Strip */}
-      <View style={styles.calendarStrip}>
-        {weekDates.map((d, index) => {
-          const isSelected = isSameDay(d, selectedDate);
-          const dayLabel = DAYS_OF_WEEK[d.getDay()].slice(0, 3);
-          return (
-            <TouchableOpacity
-              key={index}
-              style={[styles.calendarDay, isSelected && styles.calendarDaySelected]}
-              onPress={() => {
-                setSelectedDate(d);
-                setLoading(true);
-              }}
-              activeOpacity={0.7}
-            >
-              <Text style={[styles.calendarDayLabel, isSelected && styles.calendarDayLabelSelected]}>
-                {dayLabel}
-              </Text>
-              <Text style={[styles.calendarDayNumber, isSelected && styles.calendarDayNumberSelected]}>
-                {d.getDate()}
-              </Text>
-              {isToday(d) && <View style={styles.todayDot} />}
-            </TouchableOpacity>
-          );
-        })}
+      {/* Calendar Strip with week navigation */}
+      <View style={styles.calendarRow}>
+        <TouchableOpacity
+          onPress={() => setWeekOffset(prev => prev - 1)}
+          style={styles.weekNavButton}
+          accessibilityLabel="Previous week"
+          accessibilityRole="button"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <ChevronLeft color="#555577" size={20} />
+        </TouchableOpacity>
+
+        <View style={styles.calendarStrip}>
+          {weekDates.map((d, index) => {
+            const isSelected = isSameDay(d, selectedDate);
+            const dayLabel = DAYS_OF_WEEK[d.getDay()].slice(0, 3);
+            return (
+              <TouchableOpacity
+                key={index}
+                style={[styles.calendarDay, isSelected && styles.calendarDaySelected]}
+                onPress={() => {
+                  setSelectedDate(d);
+                  setLoading(true);
+                }}
+                activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel={`${dayLabel} ${d.getDate()}${isSelected ? ', selected' : ''}`}
+              >
+                <Text style={[styles.calendarDayLabel, isSelected && styles.calendarDayLabelSelected]}>
+                  {dayLabel}
+                </Text>
+                <Text style={[styles.calendarDayNumber, isSelected && styles.calendarDayNumberSelected]}>
+                  {d.getDate()}
+                </Text>
+                {isToday(d) && <View style={styles.todayDot} />}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        <TouchableOpacity
+          onPress={() => setWeekOffset(prev => prev + 1)}
+          style={styles.weekNavButton}
+          accessibilityLabel="Next week"
+          accessibilityRole="button"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <ChevronRight color="#555577" size={20} />
+        </TouchableOpacity>
       </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor="#4A9EFF"
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4A9EFF" />
         }
       >
         {/* Progress Ring */}
@@ -233,26 +292,42 @@ const TodayScreen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Today's Log */}
+        {/* Today's Log header */}
         <View style={styles.logHeader}>
-          <Text style={styles.logTitle}>{isToday(selectedDate) ? t('today.log_today') : t('today.log_other')}</Text>
+          <Text style={styles.logTitle}>
+            {isToday(selectedDate) ? t('today.log_today') : t('today.log_other')}
+          </Text>
         </View>
 
         {meals.length > 0 ? (
           meals.map((meal, index) => (
-            <MealLogItem 
-              key={meal.id || index} 
-              meal={meal} 
+            <MealLogItem
+              key={meal.id || index}
+              meal={meal}
               onPress={() => navigation.navigate('MealDetail', { meal })}
             />
           ))
         ) : (
           <View style={styles.emptyLog}>
-            <Text style={styles.emptyLogEmoji}>🍃</Text>
+            <View style={styles.emptyLogIcon}>
+              <Leaf color="#4ECDC4" size={32} strokeWidth={1.5} />
+            </View>
             <Text style={styles.emptyLogText}>{t('today.no_meals')}</Text>
             <Text style={styles.emptyLogSubtext}>
               {isToday(selectedDate) ? t('today.tap_to_add') : t('today.no_logs_day')}
             </Text>
+            {isToday(selectedDate) && (
+              <TouchableOpacity
+                style={styles.emptyLogCta}
+                onPress={openLogMeal}
+                activeOpacity={0.8}
+                accessibilityRole="button"
+                accessibilityLabel="Log your first meal"
+              >
+                <Plus color="#4A9EFF" size={16} strokeWidth={2.5} />
+                <Text style={styles.emptyLogCtaText}>Log your first meal</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
 
@@ -305,20 +380,31 @@ const styles = StyleSheet.create({
     gap: 12,
   },
 
-  // Calendar strip
+  // Calendar row with week nav arrows
+  calendarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+    marginBottom: 4,
+  },
+  weekNavButton: {
+    width: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+  },
   calendarStrip: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    marginBottom: 8,
   },
   calendarDay: {
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 16,
-    width: (SCREEN_WIDTH - 40) / 7.5,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+    borderRadius: 14,
+    minWidth: 36,
   },
   calendarDaySelected: {
     backgroundColor: '#1E1E2E',
@@ -326,7 +412,7 @@ const styles = StyleSheet.create({
     borderColor: '#4A9EFF',
   },
   calendarDayLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500',
     color: '#8888AA',
     marginBottom: 4,
@@ -335,7 +421,7 @@ const styles = StyleSheet.create({
     color: '#4A9EFF',
   },
   calendarDayNumber: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
     color: '#CCCCDD',
   },
@@ -347,7 +433,7 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     backgroundColor: '#4A9EFF',
-    marginTop: 4,
+    marginTop: 3,
   },
 
   // Scroll content
@@ -384,75 +470,20 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FFFFFF',
   },
-  editLink: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#4A9EFF',
-  },
-
-  // Meal log items
-  mealLogItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#14142A',
-    borderRadius: 16,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#1E1E38',
-  },
-  mealLogLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    gap: 12,
-  },
-  mealLogIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    backgroundColor: '#1E1E38',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mealLogEmoji: {
-    fontSize: 22,
-  },
-  mealLogName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  mealLogTime: {
-    fontSize: 12,
-    color: '#8888AA',
-    marginTop: 2,
-  },
-  mealLogRight: {
-    alignItems: 'flex-end',
-  },
-  mealLogCalories: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    fontVariant: ['tabular-nums'],
-  },
-  mealLogCalUnit: {
-    fontSize: 11,
-    color: '#8888AA',
-    marginTop: 1,
-  },
 
   // Empty state
   emptyLog: {
     alignItems: 'center',
     paddingVertical: 40,
   },
-  emptyLogEmoji: {
-    fontSize: 40,
-    marginBottom: 12,
+  emptyLogIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: '#4ECDC415',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
   },
   emptyLogText: {
     fontSize: 16,
@@ -464,6 +495,24 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#8888AA',
     textAlign: 'center',
+    lineHeight: 20,
+  },
+  emptyLogCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: '#4A9EFF40',
+    backgroundColor: '#4A9EFF10',
+  },
+  emptyLogCtaText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#4A9EFF',
   },
 
   // Loading

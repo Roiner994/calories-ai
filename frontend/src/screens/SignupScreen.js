@@ -12,7 +12,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Mail, Lock } from 'lucide-react-native';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react-native';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 
@@ -20,8 +20,13 @@ const SignupScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
   const { signUp } = useAuth();
+
+  const emailRef = React.useRef(null);
+  const passwordRef = React.useRef(null);
 
   const handleSignup = async () => {
     if (!email || !password) {
@@ -37,7 +42,7 @@ const SignupScreen = ({ navigation }) => {
       Alert.alert(t('auth.signup_failed'), error.message);
     } else {
       Alert.alert(t('common.success'), t('auth.signup_success'), [
-        { text: t('common.ok'), onPress: () => navigation.navigate('Login') }
+        { text: t('common.ok'), onPress: () => navigation.navigate('Login') },
       ]);
     }
   };
@@ -48,43 +53,79 @@ const SignupScreen = ({ navigation }) => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <ScrollView 
-          contentContainerStyle={styles.scrollContent} 
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.header}>
             <Text style={styles.title}>{t('auth.signup_title')}</Text>
-            <Text style={styles.subtitle}>
-              {t('auth.signup_subtitle')}
-            </Text>
+            <Text style={styles.subtitle}>{t('auth.signup_subtitle')}</Text>
           </View>
 
           <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Mail color="#A0A0B0" size={20} />
+            {/* Email */}
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => emailRef.current?.focus()}
+              style={[
+                styles.inputContainer,
+                focusedField === 'email' && styles.inputContainerFocused,
+              ]}
+            >
+              <Mail color={focusedField === 'email' ? '#4A9EFF' : '#A0A0B0'} size={20} />
               <TextInput
+                ref={emailRef}
                 style={styles.input}
                 placeholder={t('auth.email_placeholder')}
                 placeholderTextColor="#777790"
                 autoCapitalize="none"
                 keyboardType="email-address"
+                textContentType="emailAddress"
+                autoComplete="email"
                 value={email}
                 onChangeText={setEmail}
+                onFocus={() => setFocusedField('email')}
+                onBlur={() => setFocusedField(null)}
               />
-            </View>
+            </TouchableOpacity>
 
-            <View style={styles.inputContainer}>
-              <Lock color="#A0A0B0" size={20} />
+            {/* Password */}
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => passwordRef.current?.focus()}
+              style={[
+                styles.inputContainer,
+                focusedField === 'password' && styles.inputContainerFocused,
+              ]}
+            >
+              <Lock color={focusedField === 'password' ? '#4A9EFF' : '#A0A0B0'} size={20} />
               <TextInput
+                ref={passwordRef}
                 style={styles.input}
                 placeholder={t('auth.password_placeholder')}
                 placeholderTextColor="#777790"
-                secureTextEntry
+                secureTextEntry={!showPassword}
+                textContentType="newPassword"
+                autoComplete="new-password"
                 value={password}
                 onChangeText={setPassword}
+                onFocus={() => setFocusedField('password')}
+                onBlur={() => setFocusedField(null)}
               />
-            </View>
+              <TouchableOpacity
+                onPress={() => setShowPassword(prev => !prev)}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+                accessibilityRole="button"
+              >
+                {showPassword ? (
+                  <EyeOff color="#A0A0B0" size={20} />
+                ) : (
+                  <Eye color="#A0A0B0" size={20} />
+                )}
+              </TouchableOpacity>
+            </TouchableOpacity>
           </View>
 
           <TouchableOpacity
@@ -139,7 +180,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: '#A0A0B0',
-    lineHeight: 22,
+    lineHeight: 24,
   },
   form: {
     gap: 16,
@@ -153,6 +194,14 @@ const styles = StyleSheet.create({
     height: 60,
     borderWidth: 1,
     borderColor: '#2D2D44',
+  },
+  inputContainerFocused: {
+    borderColor: '#4A9EFF',
+    shadowColor: '#4A9EFF',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
   },
   input: {
     flex: 1,
@@ -185,6 +234,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 24,
+    gap: 6,
   },
   footerText: {
     color: '#A0A0B0',

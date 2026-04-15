@@ -5,15 +5,22 @@
  *   - Bottom Tab Navigator (Today, [+] button, Trends)
  *   - Stack screens layered on top (Result, DailySummary, Settings, ManualEntry)
  *   - Custom center button that opens the LogMealModal
+ *   - ModalContext provides global access to openLogMeal for any screen
  */
 
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { Pressable } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { LayoutGrid, BarChart3, Plus } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 
 // Screens
 import TodayScreen from '../screens/TodayScreen';
@@ -31,8 +38,8 @@ import SignupScreen from '../screens/SignupScreen';
 import LogMealModal from '../components/LogMealModal';
 import LoadingOverlay from '../components/LoadingOverlay';
 
-// Services
-import { analyzeMeal } from '../services/api';
+// Context
+import { ModalProvider, useModal } from '../context/ModalContext';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 
@@ -40,26 +47,43 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 // ---------------------------------------------------------------------------
-// Custom Center Tab Button
+// Custom Center Tab Button — spring press animation
 // ---------------------------------------------------------------------------
-const CenterTabButton = ({ onPress }) => (
-  <TouchableOpacity style={styles.centerButton} onPress={onPress} activeOpacity={0.8}>
-    <View style={styles.centerButtonInner}>
-      <Plus color="#FFFFFF" size={28} strokeWidth={2.5} />
-    </View>
-  </TouchableOpacity>
-);
+const CenterTabButton = ({ onPress }) => {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <Pressable
+      onPressIn={() => {
+        scale.value = withSpring(0.88, { damping: 14, stiffness: 200 });
+      }}
+      onPressOut={() => {
+        scale.value = withSpring(1, { damping: 12, stiffness: 180 });
+      }}
+      onPress={onPress}
+      style={styles.centerButton}
+      accessibilityRole="button"
+      accessibilityLabel="Log a meal"
+    >
+      <Animated.View style={[styles.centerButtonInner, animatedStyle]}>
+        <Plus color="#FFFFFF" size={28} strokeWidth={2.5} />
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 // ---------------------------------------------------------------------------
 // Tab Navigator with custom center button
 // ---------------------------------------------------------------------------
 const TabNavigator = ({ navigation }) => {
   const { t } = useTranslation();
-  const [modalVisible, setModalVisible] = useState(false);
+  const { logMealVisible, openLogMeal, closeLogMeal } = useModal();
   // Ref guard: prevents launching picker while it's already open on iOS
   const isPickerActive = useRef(false);
-
-  // ---- Image processing is now handled in ImagePreviewScreen ----
 
   // ---- Camera handler ----
   const handleScanMeal = async () => {
@@ -69,7 +93,7 @@ const TabNavigator = ({ navigation }) => {
     try {
       const { status: existingStatus } = await ImagePicker.getCameraPermissionsAsync();
       let finalStatus = existingStatus;
-      
+
       if (existingStatus !== 'granted') {
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
         finalStatus = status;
@@ -82,14 +106,14 @@ const TabNavigator = ({ navigation }) => {
       }
 
       // Close the modal FIRST so the iOS view controller hierarchy is clean
-      setModalVisible(false);
-      
+      closeLogMeal();
+
       // Delay picker launch to allow Modal to dismiss completely on iOS
       setTimeout(async () => {
         try {
           const result = await ImagePicker.launchCameraAsync({
             mediaTypes: ['images'],
-            allowsEditing: false, // Changed from true to allow full image
+            allowsEditing: false,
             quality: 0.8,
           });
           if (!result.canceled && result.assets?.[0]?.uri) {
@@ -102,7 +126,6 @@ const TabNavigator = ({ navigation }) => {
           isPickerActive.current = false;
         }
       }, 500);
-
     } catch (error) {
       Alert.alert(t('permissions.error_title'), t('permissions.camera_error'));
       console.error('Permission error:', error);
@@ -130,15 +153,13 @@ const TabNavigator = ({ navigation }) => {
         return;
       }
 
-      // Close the modal FIRST so the iOS view controller hierarchy is clean
-      setModalVisible(false);
+      closeLogMeal();
 
-      // Delay picker launch to allow Modal to dismiss completely on iOS
       setTimeout(async () => {
         try {
           const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
-            allowsEditing: false, // Changed from true to allow full image
+            allowsEditing: false,
             quality: 0.8,
           });
           if (!result.canceled && result.assets?.[0]?.uri) {
@@ -151,7 +172,6 @@ const TabNavigator = ({ navigation }) => {
           isPickerActive.current = false;
         }
       }, 500);
-
     } catch (error) {
       Alert.alert(t('permissions.error_title'), t('permissions.gallery_error'));
       console.error('Permission error:', error);
@@ -181,9 +201,7 @@ const TabNavigator = ({ navigation }) => {
           component={TodayScreen}
           options={{
             tabBarLabel: t('tabs.today'),
-            tabBarIcon: ({ color, size }) => (
-              <LayoutGrid color={color} size={22} />
-            ),
+            tabBarIcon: ({ color }) => <LayoutGrid color={color} size={22} />,
           }}
         />
 
@@ -193,7 +211,7 @@ const TabNavigator = ({ navigation }) => {
           component={View}
           options={{
             tabBarButton: () => (
-              <CenterTabButton onPress={() => setModalVisible(true)} />
+              <CenterTabButton onPress={openLogMeal} />
             ),
             tabBarLabel: () => null,
           }}
@@ -204,17 +222,15 @@ const TabNavigator = ({ navigation }) => {
           component={TrendsScreen}
           options={{
             tabBarLabel: t('tabs.trends'),
-            tabBarIcon: ({ color, size }) => (
-              <BarChart3 color={color} size={22} />
-            ),
+            tabBarIcon: ({ color }) => <BarChart3 color={color} size={22} />,
           }}
         />
       </Tab.Navigator>
 
-      {/* Log Meal Modal */}
+      {/* Log Meal Modal — controlled by ModalContext */}
       <LogMealModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        visible={logMealVisible}
+        onClose={closeLogMeal}
         onScanMeal={handleScanMeal}
         onGallery={handleGallery}
         onManualEntry={handleManualEntry}
@@ -226,14 +242,12 @@ const TabNavigator = ({ navigation }) => {
 // ---------------------------------------------------------------------------
 // Auth Stack Navigator
 // ---------------------------------------------------------------------------
-const AuthStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
-    </Stack.Navigator>
-  );
-};
+const AuthStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Signup" component={SignupScreen} />
+  </Stack.Navigator>
+);
 
 // ---------------------------------------------------------------------------
 // Root Stack Navigator (wraps tabs + modals)
@@ -258,53 +272,24 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={screenOptions}>
-        {user ? (
-          <>
-            <Stack.Screen
-              name="Main"
-              component={TabNavigator}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Result"
-              component={ResultScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MealDetail"
-              component={MealDetailScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="DailySummary"
-              component={DailySummaryScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ManualEntry"
-              component={ManualEntryScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Settings"
-              component={SettingsScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ImagePreview"
-              component={ImagePreviewScreen}
-              options={{ headerShown: false }}
-            />
-          </>
-        ) : (
-          <Stack.Screen
-            name="Auth"
-            component={AuthStack}
-            options={{ headerShown: false }}
-          />
-        )}
-      </Stack.Navigator>
+      {/* ModalProvider wraps everything so any screen can call openLogMeal() */}
+      <ModalProvider>
+        <Stack.Navigator screenOptions={screenOptions}>
+          {user ? (
+            <>
+              <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
+              <Stack.Screen name="Result" component={ResultScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="DailySummary" component={DailySummaryScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="ManualEntry" component={ManualEntryScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="ImagePreview" component={ImagePreviewScreen} options={{ headerShown: false }} />
+            </>
+          ) : (
+            <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
+          )}
+        </Stack.Navigator>
+      </ModalProvider>
     </NavigationContainer>
   );
 };
@@ -349,7 +334,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#4A9EFF',
     justifyContent: 'center',
     alignItems: 'center',
-    // Glow effect
     shadowColor: '#4A9EFF',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.5,

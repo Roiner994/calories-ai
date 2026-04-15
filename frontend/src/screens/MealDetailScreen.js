@@ -18,9 +18,9 @@ import {
   TextInput,
   StatusBar as RNStatusBar,
 } from 'react-native';
-import { ChevronLeft, Clock, Calendar as CalendarIcon, Trash2, Edit2, Check, X } from 'lucide-react-native';
+import { ChevronLeft, Clock, Calendar as CalendarIcon, Trash2, Edit2, Check, X, Utensils } from 'lucide-react-native';
 import { formatMealTime, formatDateForDisplay } from '../utils/dateUtils';
-import { getMealTypeLabel, getMealEmoji } from '../utils/mealUtils';
+import { getMealTypeLabel } from '../utils/mealUtils';
 import MacroBars from '../components/MacroBars';
 import DeconstructionCard from '../components/DeconstructionCard';
 import ScreenHeader from '../components/ScreenHeader';
@@ -105,7 +105,6 @@ const MealDetailScreen = ({ route, navigation }) => {
   const mealLabel = getMealTypeLabel(meal.meal_name, meal.logged_at);
   const timeLabel = formatMealTime(meal.logged_at);
   const dateLabel = formatDateForDisplay(meal.logged_at);
-  const emoji = getMealEmoji(mealLabel);
 
   return (
     <View style={styles.container}>
@@ -124,9 +123,9 @@ const MealDetailScreen = ({ route, navigation }) => {
         <View style={styles.infoSection}>
           <View style={styles.mealHeader}>
             <View style={styles.iconContainer}>
-              <Text style={styles.emoji}>{emoji}</Text>
+              <Utensils color="#8888AA" size={28} strokeWidth={1.8} />
             </View>
-            <View>
+            <View style={{ flex: 1 }}>
               {editMode ? (
                 <TextInput
                   style={styles.nameInput}
@@ -136,7 +135,7 @@ const MealDetailScreen = ({ route, navigation }) => {
                   placeholderTextColor="#4A4A6A"
                 />
               ) : (
-                <Text style={styles.mealName}>{meal.meal_name}</Text>
+                <Text style={styles.mealName} numberOfLines={2}>{meal.meal_name}</Text>
               )}
               <View style={styles.timeRow}>
                 <Clock size={14} color="#8888AA" style={{ marginRight: 4 }} />
@@ -250,12 +249,13 @@ const MealDetailScreen = ({ route, navigation }) => {
           style={styles.deleteButton}
           onPress={() => setDeleteModalVisible(true)}
           disabled={isDeleting}
+          activeOpacity={0.8}
         >
           {isDeleting ? (
             <ActivityIndicator color="#FFFFFF" size="small" />
           ) : (
             <>
-              <Trash2 color="#FF4D4D" size={18} style={{ marginRight: 8 }} />
+              <Trash2 color="#FFFFFF" size={18} style={{ marginRight: 8 }} />
               <Text style={styles.deleteButtonText}>{t('common.delete')}</Text>
             </>
           )}
@@ -519,18 +519,21 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 77, 77, 0.05)',
+    backgroundColor: '#FF4D4D',
     marginHorizontal: 24,
     marginTop: 40,
     paddingVertical: 18,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 77, 77, 0.25)',
+    shadowColor: '#FF4D4D',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
   },
   deleteButtonText: {
-    color: '#FF4D4D',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '800',
     letterSpacing: 0.5,

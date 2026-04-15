@@ -6,6 +6,7 @@
  *   - Two secondary cards: "Photo Gallery" and "Manual Entry"
  *   - "Cancel" button at the bottom
  *   - Dark glassmorphism aesthetic with gradient accents
+ *   - Haptic feedback on card press
  */
 
 import React from 'react';
@@ -18,13 +19,33 @@ import {
   Dimensions,
   Pressable,
 } from 'react-native';
-import { Scan, Image as ImageIcon, PenLine, X } from 'lucide-react-native';
+import { Scan, Image as ImageIcon, PenLine } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
 import { useTranslation } from 'react-i18next';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const LogMealModal = ({ visible, onClose, onScanMeal, onGallery, onManualEntry }) => {
   const { t } = useTranslation();
+
+  const handleScan = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onClose();
+    setTimeout(() => onScanMeal(), 500);
+  };
+
+  const handleGallery = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onClose();
+    setTimeout(() => onGallery(), 500);
+  };
+
+  const handleManual = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onClose();
+    setTimeout(() => onManualEntry(), 500);
+  };
+
   return (
     <Modal
       visible={visible}
@@ -50,19 +71,16 @@ const LogMealModal = ({ visible, onClose, onScanMeal, onGallery, onManualEntry }
         {/* Primary: AI Food Scan */}
         <TouchableOpacity
           style={styles.primaryCard}
-          onPress={() => {
-            onClose();
-            setTimeout(() => onScanMeal(), 500);
-          }}
-          activeOpacity={0.85}
+          onPress={handleScan}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Scan meal with AI"
         >
           <View style={styles.primaryIconContainer}>
             <Scan color="#4A9EFF" size={32} strokeWidth={2} />
           </View>
           <Text style={styles.primaryCardTitle}>{t('modal.ai_scan')}</Text>
-          <Text style={styles.primaryCardSubtitle}>
-            {t('modal.ai_scan_sub')}
-          </Text>
+          <Text style={styles.primaryCardSubtitle}>{t('modal.ai_scan_sub')}</Text>
         </TouchableOpacity>
 
         {/* Secondary row: Gallery + Manual */}
@@ -70,37 +88,31 @@ const LogMealModal = ({ visible, onClose, onScanMeal, onGallery, onManualEntry }
           {/* Photo Gallery */}
           <TouchableOpacity
             style={styles.secondaryCard}
-            onPress={() => {
-              onClose();
-              setTimeout(() => onGallery(), 500);
-            }}
-            activeOpacity={0.85}
+            onPress={handleGallery}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel="Choose from photo gallery"
           >
             <View style={[styles.secondaryIconContainer, { backgroundColor: '#7C3AED22' }]}>
               <ImageIcon color="#A855F7" size={22} strokeWidth={2} />
             </View>
             <Text style={styles.secondaryCardTitle}>{t('modal.gallery')}</Text>
-            <Text style={styles.secondaryCardSubtitle}>
-              {t('modal.gallery_sub')}
-            </Text>
+            <Text style={styles.secondaryCardSubtitle}>{t('modal.gallery_sub')}</Text>
           </TouchableOpacity>
 
           {/* Manual Entry */}
           <TouchableOpacity
             style={styles.secondaryCard}
-            onPress={() => {
-              onClose();
-              setTimeout(() => onManualEntry(), 500);
-            }}
-            activeOpacity={0.85}
+            onPress={handleManual}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel="Enter meal manually"
           >
             <View style={[styles.secondaryIconContainer, { backgroundColor: '#D9770622' }]}>
               <PenLine color="#F59E0B" size={22} strokeWidth={2} />
             </View>
             <Text style={styles.secondaryCardTitle}>{t('modal.manual')}</Text>
-            <Text style={styles.secondaryCardSubtitle}>
-              {t('modal.manual_sub')}
-            </Text>
+            <Text style={styles.secondaryCardSubtitle}>{t('modal.manual_sub')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -108,7 +120,9 @@ const LogMealModal = ({ visible, onClose, onScanMeal, onGallery, onManualEntry }
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={onClose}
-          activeOpacity={0.85}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Cancel"
         >
           <Text style={styles.cancelText}>{t('common.cancel')}</Text>
         </TouchableOpacity>
@@ -118,7 +132,7 @@ const LogMealModal = ({ visible, onClose, onScanMeal, onGallery, onManualEntry }
 };
 
 // ---------------------------------------------------------------------------
-// Styles — Premium dark glassmorphism sheet
+// Styles — Premium dark sheet
 // ---------------------------------------------------------------------------
 const styles = StyleSheet.create({
   backdrop: {
@@ -137,7 +151,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 40,
     paddingTop: 12,
-    // Subtle top shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.3,
@@ -166,6 +179,7 @@ const styles = StyleSheet.create({
     color: '#8888AA',
     textAlign: 'center',
     marginBottom: 24,
+    lineHeight: 20,
   },
 
   // Primary card — AI Scan
@@ -178,7 +192,6 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     borderWidth: 1.5,
     borderColor: '#4A9EFF40',
-    // Glow
     shadowColor: '#4A9EFF',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -213,7 +226,6 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 20,
   },
-
   secondaryCard: {
     flex: 1,
     backgroundColor: '#22223A',

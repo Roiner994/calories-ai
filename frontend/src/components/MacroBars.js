@@ -19,27 +19,27 @@ const MacroBars = ({ protein, carbs, fats }) => {
         <View
           style={[
             styles.barSegment,
-            { flex: protein / total, backgroundColor: '#3B82F6' },
+            { flex: (protein || 0) / total, backgroundColor: '#4ECDC4' },
           ]}
         />
         <View
           style={[
             styles.barSegment,
-            { flex: carbs / total, backgroundColor: '#F59E0B' },
+            { flex: (carbs || 0) / total, backgroundColor: '#FFD93D' },
           ]}
         />
         <View
           style={[
             styles.barSegment,
-            { flex: fats / total, backgroundColor: '#A855F7' },
+            { flex: (fats || 0) / total, backgroundColor: '#C084FC' },
           ]}
         />
       </View>
       {/* Legend */}
       <View style={styles.barLegend}>
-        <MacroLegendItem color="#3B82F6" value={protein} label="Protein" />
-        <MacroLegendItem color="#F59E0B" value={carbs} label="Carbs" />
-        <MacroLegendItem color="#A855F7" value={fats} label="Fats" />
+        <MacroLegendItem color="#4ECDC4" value={protein} label="Protein" />
+        <MacroLegendItem color="#FFD93D" value={carbs} label="Carbs" />
+        <MacroLegendItem color="#C084FC" value={fats} label="Fats" />
       </View>
     </View>
   );
@@ -47,7 +47,6 @@ const MacroBars = ({ protein, carbs, fats }) => {
 
 const styles = StyleSheet.create({
   macroBarsWrapper: {
-    backgroundColor: '#0D0D1A',
     paddingHorizontal: 20,
     paddingBottom: 20,
   },

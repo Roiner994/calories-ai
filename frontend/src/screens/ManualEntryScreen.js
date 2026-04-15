@@ -17,6 +17,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { logMealManual } from '../services/api';
 import ScreenHeader from '../components/ScreenHeader';
@@ -32,6 +34,12 @@ const ManualEntryScreen = ({ navigation }) => {
   const [carbs, setCarbs] = useState('');
   const [fats, setFats] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+
+  const mealNameRef = React.useRef(null);
+  const caloriesRef = React.useRef(null);
+  const proteinRef = React.useRef(null);
+  const carbsRef = React.useRef(null);
+  const fatsRef = React.useRef(null);
 
   const handleSave = async () => {
     if (!mealName.trim()) {
@@ -73,6 +81,8 @@ const ManualEntryScreen = ({ navigation }) => {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ flex: 1 }}>
       <StatusBar style="light" />
       
       <ScreenHeader 
@@ -91,23 +101,29 @@ const ManualEntryScreen = ({ navigation }) => {
         {/* Meal Name */}
         <Text style={styles.inputLabel}>{t('manual.meal_name')}</Text>
         <TextInput
+          ref={mealNameRef}
           style={styles.input}
           placeholder="e.g., Chicken Salad"
           placeholderTextColor="#555577"
           value={mealName}
           onChangeText={setMealName}
           autoFocus
+          returnKeyType="next"
+          onSubmitEditing={() => caloriesRef.current?.focus()}
         />
 
         {/* Calories */}
         <Text style={styles.inputLabel}>{t('manual.calories')}</Text>
         <TextInput
+          ref={caloriesRef}
           style={styles.input}
           placeholder="e.g., 450"
           placeholderTextColor="#555577"
           value={calories}
           onChangeText={setCalories}
           keyboardType="numeric"
+          returnKeyType="next"
+          onSubmitEditing={() => proteinRef.current?.focus()}
         />
 
         {/* Optional Macros */}
@@ -116,34 +132,43 @@ const ManualEntryScreen = ({ navigation }) => {
           <View style={styles.macroInput}>
             <Text style={styles.macroLabel}>{t('manual.protein')}</Text>
             <TextInput
+              ref={proteinRef}
               style={styles.input}
               placeholder="0"
               placeholderTextColor="#555577"
               value={protein}
               onChangeText={setProtein}
               keyboardType="numeric"
+              returnKeyType="next"
+              onSubmitEditing={() => carbsRef.current?.focus()}
             />
           </View>
           <View style={styles.macroInput}>
             <Text style={styles.macroLabel}>{t('manual.carbs')}</Text>
             <TextInput
+              ref={carbsRef}
               style={styles.input}
               placeholder="0"
               placeholderTextColor="#555577"
               value={carbs}
               onChangeText={setCarbs}
               keyboardType="numeric"
+              returnKeyType="next"
+              onSubmitEditing={() => fatsRef.current?.focus()}
             />
           </View>
           <View style={styles.macroInput}>
             <Text style={styles.macroLabel}>{t('manual.fats')}</Text>
             <TextInput
+              ref={fatsRef}
               style={styles.input}
               placeholder="0"
               placeholderTextColor="#555577"
               value={fats}
               onChangeText={setFats}
               keyboardType="numeric"
+              returnKeyType="done"
+              onSubmitEditing={handleSave}
             />
           </View>
         </View>
@@ -160,6 +185,8 @@ const ManualEntryScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+      </View>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };

@@ -22,7 +22,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { Zap } from 'lucide-react-native';
+import { Zap, User } from 'lucide-react-native';
 import { getTrends, getUserSettings } from '../services/api';
 import ScreenHeader from '../components/ScreenHeader';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +36,7 @@ const TIMEFRAMES = [
   { labelKey: 'trends.yearly', days: 365 },
 ];
 
-const TrendsScreen = () => {
+const TrendsScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const [selectedTimeframe, setSelectedTimeframe] = useState(0); // index
   const [trendsData, setTrendsData] = useState(null);
@@ -131,8 +131,13 @@ const TrendsScreen = () => {
         centerTitle={false}
         titleStyle={styles.headerTitle}
         rightElement={
-          <TouchableOpacity style={styles.profileDot}>
-            <View style={styles.profileDotInner} />
+          <TouchableOpacity
+            style={styles.settingsButton}
+            onPress={() => navigation.navigate('Settings')}
+            accessibilityLabel="Open settings"
+            accessibilityRole="button"
+          >
+            <User color="#FFFFFF" size={20} />
           </TouchableOpacity>
         }
       />
@@ -371,9 +376,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
   timeframeButtonActive: {
-    backgroundColor: '#1E1E38',
+    backgroundColor: '#4A9EFF18',
+    borderColor: '#4A9EFF40',
   },
   timeframeLabel: {
     fontSize: 14,
@@ -381,8 +389,10 @@ const styles = StyleSheet.create({
     color: '#8888AA',
   },
   timeframeLabelActive: {
-    color: '#FFFFFF',
+    color: '#4A9EFF',
+    fontWeight: '700',
   },
+
 
   // Scroll
   scrollContent: {
@@ -583,6 +593,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#1E1E38',
   },
+  settingsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1E1E2E',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#2A2A3E',
+  },
   streakIcon: {
     width: 48,
     height: 48,
@@ -591,6 +611,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   streakInfo: {
     flex: 1,
   },
