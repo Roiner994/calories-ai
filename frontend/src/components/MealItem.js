@@ -44,23 +44,23 @@ const MealItem = ({ mealName, loggedAt, calories, protein, carbs, fats }) => {
 
       {/* Macro pills row */}
       <View style={styles.macroRow}>
-        <View style={[styles.pill, { backgroundColor: '#FF6B6B22' }]}>
-          <Text style={[styles.pillText, { color: '#FF6B6B' }]}>
+        <View style={[styles.pill, { backgroundColor: '#3E63DD22' }]}>
+          <Text style={[styles.pillText, { color: '#3E63DD' }]}>
             🔥 {calories?.toFixed(0)} kcal
           </Text>
         </View>
-        <View style={[styles.pill, { backgroundColor: '#4ECDC422' }]}>
-          <Text style={[styles.pillText, { color: '#4ECDC4' }]}>
+        <View style={[styles.pill, { backgroundColor: '#F43F5E22' }]}>
+          <Text style={[styles.pillText, { color: '#F43F5E' }]}>
             💪 {protein?.toFixed(1)}g
           </Text>
         </View>
-        <View style={[styles.pill, { backgroundColor: '#FFD93D22' }]}>
-          <Text style={[styles.pillText, { color: '#FFD93D' }]}>
+        <View style={[styles.pill, { backgroundColor: '#F59E0B22' }]}>
+          <Text style={[styles.pillText, { color: '#F59E0B' }]}>
             🌾 {carbs?.toFixed(1)}g
           </Text>
         </View>
-        <View style={[styles.pill, { backgroundColor: '#C084FC22' }]}>
-          <Text style={[styles.pillText, { color: '#C084FC' }]}>
+        <View style={[styles.pill, { backgroundColor: '#06B6D422' }]}>
+          <Text style={[styles.pillText, { color: '#06B6D4' }]}>
             🧈 {fats?.toFixed(1)}g
           </Text>
         </View>
@@ -71,16 +71,12 @@ const MealItem = ({ mealName, loggedAt, calories, protein, carbs, fats }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1E1E2E',
+    backgroundColor: '#16162A',
     borderRadius: 14,
     padding: 16,
     marginBottom: 12,
-    // Subtle shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#1E1E38',
   },
   header: {
     flexDirection: 'row',

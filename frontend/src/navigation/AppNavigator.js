@@ -190,7 +190,7 @@ const TabNavigator = ({ navigation }) => {
         screenOptions={{
           headerShown: false,
           tabBarStyle: styles.tabBar,
-          tabBarActiveTintColor: '#4A9EFF',
+          tabBarActiveTintColor: '#3E63DD',
           tabBarInactiveTintColor: '#555577',
           tabBarLabelStyle: styles.tabBarLabel,
           tabBarItemStyle: styles.tabBarItem,
@@ -257,14 +257,14 @@ const AppNavigator = () => {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#0D0D1A', justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#4A9EFF" />
+      <View style={{ flex: 1, backgroundColor: '#0B0B15', justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#3E63DD" />
       </View>
     );
   }
 
   const screenOptions = {
-    headerStyle: { backgroundColor: '#0D0D1A' },
+    headerStyle: { backgroundColor: '#0B0B15' },
     headerTintColor: '#FFFFFF',
     headerTitleStyle: { fontWeight: 'bold' },
     headerShadowVisible: false,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   // Bottom Tab Bar
   tabBar: {
     position: 'absolute',
-    backgroundColor: '#0D0D1A',
+    backgroundColor: '#16162A',
     borderTopWidth: 0,
     height: 85,
     paddingBottom: 20,
@@ -331,10 +331,10 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#4A9EFF',
+    backgroundColor: '#3E63DD',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#4A9EFF',
+    shadowColor: '#3E63DD',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.5,
     shadowRadius: 12,

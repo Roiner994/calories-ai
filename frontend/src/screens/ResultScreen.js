@@ -2,7 +2,7 @@
  * ResultScreen.js — Displays the AI analysis results.
  *
  * Design matches the VisionMacro reference but adapted for DARK THEME:
- *  - Dark background (#0D0D1A), back arrow header
+ *  - Dark background (#0B0B15), back arrow header
  *  - Food image with ingredient label overlays
  *  - Large calorie total + ESTIMATED badge
  *  - Colored macro bars (protein / carbs / fats)
@@ -39,6 +39,8 @@ import DeconstructionCard from '../components/DeconstructionCard';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { useTranslation } from 'react-i18next';
 import { useDate } from '../context/DateContext';
+
+import COLORS from '../theme/colors';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -197,7 +199,7 @@ const ResultScreen = ({ route, navigation }) => {
               resizeMode="cover"
             />
             <View style={styles.expandHint}>
-              <Maximize2 color="#FFFFFF" size={16} />
+              <Maximize2 color={COLORS.text} size={16} />
             </View>
           </TouchableOpacity>
         )}
@@ -215,7 +217,7 @@ const ResultScreen = ({ route, navigation }) => {
                 style={styles.closeFullImage} 
                 onPress={() => setShowFullImage(false)}
               >
-                <X color="#FFFFFF" size={28} />
+                <X color={COLORS.text} size={28} />
               </TouchableOpacity>
             </SafeAreaView>
             <Image
@@ -252,7 +254,7 @@ const ResultScreen = ({ route, navigation }) => {
                 value={mealName}
                 onChangeText={setMealName}
                 placeholder={t('result.meal_name_placeholder')}
-                placeholderTextColor="#4A4A6A"
+                placeholderTextColor={COLORS.textMuted}
                 autoFocus
                 onBlur={() => setIsEditingName(false)}
               />
@@ -265,20 +267,22 @@ const ResultScreen = ({ route, navigation }) => {
               onPress={() => setIsEditingName(!isEditingName)}
             >
               {isEditingName ? (
-                <Check color="#3B82F6" size={20} />
+                <Check color={COLORS.primary} size={20} />
               ) : (
-                <Edit2 color="#5AB2FF" size={18} />
+                <Edit2 color={COLORS.primary} size={18} />
               )}
             </TouchableOpacity>
           </View>
         </View>
 
         {/* ── Macro Bars ───────────────────────────────────────────── */}
-        <MacroBars
-          protein={currentTotals.protein_g}
-          carbs={currentTotals.carbs_g}
-          fats={currentTotals.fats_g}
-        />
+        <View style={styles.macroBarsWrapper}>
+          <MacroBars
+            protein={currentTotals.protein_g}
+            carbs={currentTotals.carbs_g}
+            fats={currentTotals.fats_g}
+          />
+        </View>
 
         {/* ── Deconstruction Section ───────────────────────────────── */}
         <Text style={styles.sectionTitle}>{t('result.deconstruction')}</Text>
@@ -292,7 +296,7 @@ const ResultScreen = ({ route, navigation }) => {
           ))}
           {ingredientsList.length === 0 && (
             <View style={{ padding: 24, alignItems: 'center' }}>
-              <Text style={{ color: '#555577', fontStyle: 'italic' }}>{t('result.no_ingredients')}</Text>
+              <Text style={{ color: COLORS.textSecondary, fontStyle: 'italic' }}>{t('result.no_ingredients')}</Text>
             </View>
           )}
         </View>
@@ -300,7 +304,7 @@ const ResultScreen = ({ route, navigation }) => {
         {/* ── Refine with AI ───────────────────────────────────────── */}
         <View style={styles.refineSection}>
           <View style={styles.refineHeader}>
-            <Sparkles color="#A855F7" size={16} />
+            <Sparkles color={COLORS.info} size={16} />
             <Text style={styles.refineTitle}>{t('result.adjust_ai')}</Text>
           </View>
           <View style={styles.refineInputContainer}>
@@ -309,7 +313,7 @@ const ResultScreen = ({ route, navigation }) => {
               value={feedbackText}
               onChangeText={setFeedbackText}
               placeholder={t('result.adjust_placeholder')}
-              placeholderTextColor="#4A4A6A"
+              placeholderTextColor={COLORS.textMuted}
               returnKeyType="send"
               onSubmitEditing={handleRefine}
               editable={!isRefining}
@@ -319,7 +323,7 @@ const ResultScreen = ({ route, navigation }) => {
               onPress={handleRefine}
               disabled={!feedbackText.trim() || isRefining}
             >
-              <Send color={(!feedbackText.trim() || isRefining) ? "#555577" : "#FFFFFF"} size={16} />
+              <Send color={(!feedbackText.trim() || isRefining) ? COLORS.textMuted : COLORS.text} size={16} />
             </TouchableOpacity>
           </View>
           {isRefining && <Text style={styles.refiningText}>{t('result.refining')}</Text>}
@@ -337,7 +341,7 @@ const ResultScreen = ({ route, navigation }) => {
           >
             <View style={styles.logButtonInner}>
               {saved ? null : (
-                <Plus color="#FFFFFF" size={20} style={{ marginRight: 8 }} strokeWidth={3} />
+                <Plus color={COLORS.text} size={20} style={{ marginRight: 8 }} strokeWidth={3} />
               )}
               <Text style={styles.logButtonText}>
                 {saved ? t('result.log_success') : isSaving ? t('result.log_saving') : t('result.log_meal')}
@@ -374,7 +378,7 @@ const ResultScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
   },
 
   // ── Scroll content ───────────────────────────────────────────────────────
@@ -433,7 +437,7 @@ const styles = StyleSheet.create({
 
   // ── Calories section ─────────────────────────────────────────────────────
   caloriesSection: {
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
     paddingHorizontal: 20,
     paddingTop: 24,
     paddingBottom: 8,
@@ -447,7 +451,7 @@ const styles = StyleSheet.create({
   totalCaloriesLabel: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#555577',
+    color: COLORS.textSecondary,
     letterSpacing: 1.5,
   },
   
@@ -455,12 +459,12 @@ const styles = StyleSheet.create({
   nameSection: {
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
   },
   nameLabel: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#555577',
+    color: COLORS.textSecondary,
     letterSpacing: 1,
     marginBottom: 4,
   },
@@ -469,20 +473,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(90, 178, 255, 0.3)',
+    borderBottomColor: COLORS.border,
     minHeight: 44,
   },
   nameDisplay: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: COLORS.text,
     flex: 1,
     paddingVertical: 8,
   },
   nameInput: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: COLORS.text,
     paddingVertical: 8,
   },
   editNameBtn: {
@@ -490,7 +494,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   estimatedBadge: {
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    backgroundColor: COLORS.primary + '15',
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 3,
@@ -498,7 +502,7 @@ const styles = StyleSheet.create({
   estimatedBadgeText: {
     fontSize: 10,
     fontWeight: '900',
-    color: '#3B82F6',
+    color: COLORS.primary,
     letterSpacing: 1,
   },
   caloriesValueRow: {
@@ -508,20 +512,20 @@ const styles = StyleSheet.create({
   caloriesNumber: {
     fontSize: 62,
     fontWeight: '900',
-    color: '#FFFFFF',
+    color: COLORS.text,
     lineHeight: 68,
   },
   caloriesUnit: {
     fontSize: 22,
     fontWeight: '600',
-    color: '#555577',
+    color: COLORS.textSecondary,
     marginBottom: 10,
     marginLeft: 6,
   },
 
   // ── Macro bars ───────────────────────────────────────────────────────────
   macroBarsWrapper: {
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
     paddingHorizontal: 20,
     paddingBottom: 20,
   },
@@ -530,7 +534,7 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     overflow: 'hidden',
-    backgroundColor: '#1E1E2E',
+    backgroundColor: COLORS.border,
     marginBottom: 12,
     gap: 3,
   },
@@ -554,30 +558,30 @@ const styles = StyleSheet.create({
   legendValue: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: COLORS.text,
   },
   legendLabel: {
     fontSize: 13,
-    color: '#555577',
+    color: COLORS.textSecondary,
   },
 
   // ── Deconstruction ───────────────────────────────────────────────────────
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: COLORS.text,
     paddingHorizontal: 20,
     paddingTop: 24,
     paddingBottom: 12,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
   },
   deconList: {
-    backgroundColor: '#1A1A2E',
+    backgroundColor: COLORS.surface,
     marginHorizontal: 16,
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: COLORS.border,
   },
   deconCard: {
     flexDirection: 'row',
@@ -586,7 +590,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#2A2A3E',
+    borderBottomColor: COLORS.border,
   },
   deconLeft: {
     flex: 1,
@@ -595,12 +599,12 @@ const styles = StyleSheet.create({
   deconName: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: COLORS.text,
     marginBottom: 4,
   },
   deconPortion: {
     fontSize: 12,
-    color: '#555577',
+    color: COLORS.textSecondary,
   },
   deconRight: {
     alignItems: 'flex-end',
@@ -608,23 +612,23 @@ const styles = StyleSheet.create({
   deconKcal: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: COLORS.text,
     marginBottom: 3,
   },
   deconMacros: {
     fontSize: 12,
-    color: '#555577',
+    color: COLORS.textSecondary,
   },
 
   // ── Refine Section ───────────────────────────────────────────────────────
   refineSection: {
     marginHorizontal: 16,
     marginTop: 20,
-    backgroundColor: '#1A1A2E',
+    backgroundColor: COLORS.surface,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: COLORS.border,
   },
   refineHeader: {
     flexDirection: 'row',
@@ -635,34 +639,34 @@ const styles = StyleSheet.create({
   refineTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#A855F7',
+    color: COLORS.info,
   },
   refineInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: COLORS.border,
     paddingRight: 8,
   },
   refineInput: {
     flex: 1,
-    color: '#FFFFFF',
+    color: COLORS.text,
     fontSize: 14,
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
   refineSendBtn: {
-    backgroundColor: '#A855F7',
+    backgroundColor: COLORS.info,
     padding: 8,
     borderRadius: 8,
   },
   refineSendBtnDisabled: {
-    backgroundColor: '#2A2A3E',
+    backgroundColor: COLORS.border,
   },
   refiningText: {
-    color: '#A855F7',
+    color: COLORS.info,
     fontSize: 12,
     marginTop: 8,
     fontStyle: 'italic',
@@ -673,14 +677,14 @@ const styles = StyleSheet.create({
   warningBanner: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+    backgroundColor: COLORS.warning + '1A',
     borderRadius: 14,
     marginHorizontal: 16,
     marginTop: 20,
     padding: 16,
     gap: 12,
     borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.2)',
+    borderColor: COLORS.warning + '33',
   },
   warningIcon: {
     fontSize: 18,
@@ -692,24 +696,24 @@ const styles = StyleSheet.create({
   warningTitle: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#F59E0B',
+    color: COLORS.warning,
     marginBottom: 4,
   },
   warningBody: {
     fontSize: 13,
-    color: 'rgba(245, 158, 11, 0.7)',
+    color: COLORS.warning + 'B3',
     lineHeight: 18,
   },
 
   // ── Log this Meal button ─────────────────────────────────────────────────
   logButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: COLORS.primary,
     marginHorizontal: 16,
     marginTop: 24,
     borderRadius: 18,
     paddingVertical: 18,
     alignItems: 'center',
-    shadowColor: '#3B82F6',
+    shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
@@ -721,13 +725,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logButtonSaved: {
-    backgroundColor: '#10B981',
-    shadowColor: '#10B981',
+    backgroundColor: COLORS.success,
+    shadowColor: COLORS.success,
   },
   logButtonText: {
     fontSize: 17,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: COLORS.text,
     letterSpacing: 0.5,
   },
 });

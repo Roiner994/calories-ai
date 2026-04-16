@@ -45,6 +45,8 @@ import { useTranslation } from 'react-i18next';
 import { useDate } from '../context/DateContext';
 import { useModal } from '../context/ModalContext';
 
+import COLORS from '../theme/colors';
+
 const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -168,7 +170,7 @@ const TodayScreen = ({ navigation }) => {
     return (
       <View style={styles.loadingContainer}>
         <StatusBar style="light" />
-        <ActivityIndicator size="large" color="#4A9EFF" />
+        <ActivityIndicator size="large" color={COLORS.primary} />
         <Text style={styles.loadingText}>{t('common.loading')}</Text>
       </View>
     );
@@ -204,7 +206,7 @@ const TodayScreen = ({ navigation }) => {
               accessibilityLabel="Select date"
               accessibilityRole="button"
             >
-              <CalendarIcon color="#FFFFFF" size={20} />
+              <CalendarIcon color={COLORS.text} size={20} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.headerIconButton}
@@ -212,7 +214,7 @@ const TodayScreen = ({ navigation }) => {
               accessibilityLabel="Open settings"
               accessibilityRole="button"
             >
-              <User color="#FFFFFF" size={20} />
+              <User color={COLORS.text} size={20} />
             </TouchableOpacity>
           </View>
         }
@@ -227,7 +229,7 @@ const TodayScreen = ({ navigation }) => {
           accessibilityRole="button"
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <ChevronLeft color="#555577" size={20} />
+          <ChevronLeft color={COLORS.textMuted} size={20} />
         </TouchableOpacity>
 
         <View style={styles.calendarStrip}>
@@ -265,7 +267,7 @@ const TodayScreen = ({ navigation }) => {
           accessibilityRole="button"
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <ChevronRight color="#555577" size={20} />
+          <ChevronRight color={COLORS.textMuted} size={20} />
         </TouchableOpacity>
       </View>
 
@@ -273,7 +275,7 @@ const TodayScreen = ({ navigation }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4A9EFF" />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />
         }
       >
         {/* Progress Ring */}
@@ -286,9 +288,9 @@ const TodayScreen = ({ navigation }) => {
           />
           {/* Macro bars below ring */}
           <View style={styles.macroBarContainer}>
-            <MacroBar label={t('today.protein')} value={totalProtein} color="#4ECDC4" />
-            <MacroBar label={t('today.carbs')} value={totalCarbs} color="#FFD93D" />
-            <MacroBar label={t('today.fats')} value={totalFats} color="#C084FC" />
+            <MacroBar label={t('today.protein')} value={totalProtein} color={COLORS.protein} />
+            <MacroBar label={t('today.carbs')} value={totalCarbs} color={COLORS.carbs} />
+            <MacroBar label={t('today.fats')} value={totalFats} color={COLORS.fats} />
           </View>
         </View>
 
@@ -310,7 +312,7 @@ const TodayScreen = ({ navigation }) => {
         ) : (
           <View style={styles.emptyLog}>
             <View style={styles.emptyLogIcon}>
-              <Leaf color="#4ECDC4" size={32} strokeWidth={1.5} />
+              <Leaf color={COLORS.fats} size={32} strokeWidth={1.5} />
             </View>
             <Text style={styles.emptyLogText}>{t('today.no_meals')}</Text>
             <Text style={styles.emptyLogSubtext}>
@@ -324,7 +326,7 @@ const TodayScreen = ({ navigation }) => {
                 accessibilityRole="button"
                 accessibilityLabel="Log your first meal"
               >
-                <Plus color="#4A9EFF" size={16} strokeWidth={2.5} />
+                <Plus color={COLORS.primary} size={16} strokeWidth={2.5} />
                 <Text style={styles.emptyLogCtaText}>Log your first meal</Text>
               </TouchableOpacity>
             )}
@@ -354,12 +356,12 @@ const TodayScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: COLORS.text,
   },
   headerTitleSub: {
     fontSize: 20,
@@ -368,11 +370,11 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#1E1E2E',
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: COLORS.border,
   },
   headerRight: {
     flexDirection: 'row',
@@ -407,18 +409,18 @@ const styles = StyleSheet.create({
     minWidth: 36,
   },
   calendarDaySelected: {
-    backgroundColor: '#1E1E2E',
+    backgroundColor: COLORS.surface,
     borderWidth: 1.5,
-    borderColor: '#4A9EFF',
+    borderColor: COLORS.primary,
   },
   calendarDayLabel: {
     fontSize: 11,
     fontWeight: '500',
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     marginBottom: 4,
   },
   calendarDayLabelSelected: {
-    color: '#4A9EFF',
+    color: COLORS.primary,
   },
   calendarDayNumber: {
     fontSize: 17,
@@ -426,13 +428,13 @@ const styles = StyleSheet.create({
     color: '#CCCCDD',
   },
   calendarDayNumberSelected: {
-    color: '#FFFFFF',
+    color: COLORS.text,
   },
   todayDot: {
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#4A9EFF',
+    backgroundColor: COLORS.primary,
     marginTop: 3,
   },
 
@@ -446,12 +448,12 @@ const styles = StyleSheet.create({
   ringSection: {
     alignItems: 'center',
     marginBottom: 28,
-    backgroundColor: '#14142A',
+    backgroundColor: COLORS.surface,
     borderRadius: 24,
     paddingVertical: 28,
     paddingHorizontal: 24,
     borderWidth: 1,
-    borderColor: '#1E1E38',
+    borderColor: COLORS.border,
   },
   macroBarContainer: {
     width: '100%',
@@ -468,7 +470,7 @@ const styles = StyleSheet.create({
   logTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: COLORS.text,
   },
 
   // Empty state
@@ -480,7 +482,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 20,
-    backgroundColor: '#4ECDC415',
+    backgroundColor: COLORS.fats + '15',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
@@ -493,7 +495,7 @@ const styles = StyleSheet.create({
   },
   emptyLogSubtext: {
     fontSize: 13,
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -506,25 +508,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 14,
     borderWidth: 1.5,
-    borderColor: '#4A9EFF40',
-    backgroundColor: '#4A9EFF10',
+    borderColor: COLORS.primary + '40',
+    backgroundColor: COLORS.primary + '10',
   },
   emptyLogCtaText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#4A9EFF',
+    color: COLORS.primary,
   },
 
   // Loading
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
     fontSize: 15,
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     marginTop: 12,
   },
 });

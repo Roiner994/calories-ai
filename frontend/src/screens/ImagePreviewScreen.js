@@ -23,6 +23,8 @@ import ScreenHeader from '../components/ScreenHeader';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { useTranslation } from 'react-i18next';
 
+import COLORS from '../theme/colors';
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const ImagePreviewScreen = ({ route, navigation }) => {
@@ -67,7 +69,7 @@ const ImagePreviewScreen = ({ route, navigation }) => {
         onBack={handleRetake}
         leftElement={
           <TouchableOpacity onPress={handleRetake} style={{ marginLeft: -4 }}>
-            <X color="#FFFFFF" size={28} />
+            <X color={COLORS.text} size={28} />
           </TouchableOpacity>
         }
       />
@@ -93,7 +95,7 @@ const ImagePreviewScreen = ({ route, navigation }) => {
           onPress={handleRetake}
           activeOpacity={0.8}
         >
-          <RefreshCw color="#CCCCDD" size={20} style={{ marginRight: 8 }} />
+          <RefreshCw color={COLORS.textSecondary} size={20} style={{ marginRight: 8 }} />
           <Text style={styles.secondaryButtonText}>{t('preview.retake')}</Text>
         </TouchableOpacity>
 
@@ -102,7 +104,7 @@ const ImagePreviewScreen = ({ route, navigation }) => {
           onPress={handleConfirm}
           activeOpacity={0.9}
         >
-          <Sparkles color="#FFFFFF" size={20} style={{ marginRight: 8 }} />
+          <Sparkles color={COLORS.text} size={20} style={{ marginRight: 8 }} />
           <Text style={styles.primaryButtonText}>{t('preview.analyze')}</Text>
         </TouchableOpacity>
       </View>
@@ -115,7 +117,7 @@ const ImagePreviewScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
   },
   imageContainer: {
     flex: 1,
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#1E1E2E',
+    borderColor: COLORS.border,
   },
   previewImage: {
     width: '100%',
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   errorText: {
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     fontSize: 16,
   },
   bottomActions: {
@@ -150,37 +152,37 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     flex: 2,
-    backgroundColor: '#3B82F6',
+    backgroundColor: COLORS.primary,
     borderRadius: 18,
     height: 60,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#3B82F6',
+    shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 8,
   },
   primaryButtonText: {
-    color: '#FFFFFF',
+    color: COLORS.text,
     fontSize: 17,
     fontWeight: '800',
     letterSpacing: 0.5,
   },
   secondaryButton: {
     flex: 1,
-    backgroundColor: '#1E1E2E',
+    backgroundColor: COLORS.border,
     borderRadius: 18,
     height: 60,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: COLORS.textMuted + '40',
   },
   secondaryButtonText: {
-    color: '#CCCCDD',
+    color: COLORS.textSecondary,
     fontSize: 16,
     fontWeight: '600',
   },

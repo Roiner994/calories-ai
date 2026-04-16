@@ -77,7 +77,7 @@ const LogMealModal = ({ visible, onClose, onScanMeal, onGallery, onManualEntry }
           accessibilityLabel="Scan meal with AI"
         >
           <View style={styles.primaryIconContainer}>
-            <Scan color="#4A9EFF" size={32} strokeWidth={2} />
+            <Scan color="#3E63DD" size={32} strokeWidth={2} />
           </View>
           <Text style={styles.primaryCardTitle}>{t('modal.ai_scan')}</Text>
           <Text style={styles.primaryCardSubtitle}>{t('modal.ai_scan_sub')}</Text>
@@ -93,8 +93,8 @@ const LogMealModal = ({ visible, onClose, onScanMeal, onGallery, onManualEntry }
             accessibilityRole="button"
             accessibilityLabel="Choose from photo gallery"
           >
-            <View style={[styles.secondaryIconContainer, { backgroundColor: '#7C3AED22' }]}>
-              <ImageIcon color="#A855F7" size={22} strokeWidth={2} />
+            <View style={[styles.secondaryIconContainer, { backgroundColor: '#3E63DD15' }]}>
+              <ImageIcon color="#3E63DD" size={22} strokeWidth={2} />
             </View>
             <Text style={styles.secondaryCardTitle}>{t('modal.gallery')}</Text>
             <Text style={styles.secondaryCardSubtitle}>{t('modal.gallery_sub')}</Text>
@@ -108,7 +108,7 @@ const LogMealModal = ({ visible, onClose, onScanMeal, onGallery, onManualEntry }
             accessibilityRole="button"
             accessibilityLabel="Enter meal manually"
           >
-            <View style={[styles.secondaryIconContainer, { backgroundColor: '#D9770622' }]}>
+            <View style={[styles.secondaryIconContainer, { backgroundColor: '#F59E0B15' }]}>
               <PenLine color="#F59E0B" size={22} strokeWidth={2} />
             </View>
             <Text style={styles.secondaryCardTitle}>{t('modal.manual')}</Text>
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
 
   sheetContainer: {
-    backgroundColor: '#1A1A2E',
+    backgroundColor: '#16162A',
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     paddingHorizontal: 24,
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#3A3A50',
+    backgroundColor: '#1E1E38',
     marginBottom: 20,
   },
 
@@ -184,15 +184,15 @@ const styles = StyleSheet.create({
 
   // Primary card — AI Scan
   primaryCard: {
-    backgroundColor: '#22223A',
+    backgroundColor: '#1E1E38',
     borderRadius: 20,
     paddingVertical: 28,
     paddingHorizontal: 20,
     alignItems: 'center',
     marginBottom: 14,
     borderWidth: 1.5,
-    borderColor: '#4A9EFF40',
-    shadowColor: '#4A9EFF',
+    borderColor: '#3E63DD30',
+    shadowColor: '#3E63DD',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 16,
-    backgroundColor: '#4A9EFF15',
+    backgroundColor: '#3E63DD15',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 14,
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2E2E48',
+    borderColor: '#1E1E38',
   },
   secondaryIconContainer: {
     width: 44,
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
 
   // Cancel
   cancelButton: {
-    backgroundColor: '#2A2A42',
+    backgroundColor: '#1E1E38',
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',

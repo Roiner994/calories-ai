@@ -77,9 +77,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: '#0B0B15',
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
+    borderBottomColor: '#1E1E38',
   },
   actionContainer: {
     minWidth: 44,

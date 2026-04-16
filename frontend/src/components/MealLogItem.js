@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Utensils } from 'lucide-react-native';
 import { formatMealTime } from '../utils/dateUtils';
 import { getMealTypeLabel } from '../utils/mealUtils';
+import COLORS from '../theme/colors';
 
 const MealLogItem = ({ meal, onPress }) => {
   const mealLabel = getMealTypeLabel(meal.meal_name, meal.logged_at);
@@ -18,7 +19,7 @@ const MealLogItem = ({ meal, onPress }) => {
     >
       <View style={styles.mealLogLeft}>
         <View style={styles.mealLogIcon}>
-          <Utensils color="#8888AA" size={20} strokeWidth={1.8} />
+          <Utensils color={COLORS.textSecondary} size={20} strokeWidth={1.8} />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.mealLogName} numberOfLines={1} ellipsizeMode="tail">
@@ -42,13 +43,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#14142A',
+    backgroundColor: COLORS.surface,
     borderRadius: 16,
     paddingVertical: 14,
     paddingHorizontal: 16,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#1E1E38',
+    borderColor: COLORS.border,
   },
   mealLogLeft: {
     flexDirection: 'row',
@@ -60,18 +61,18 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 14,
-    backgroundColor: '#1E1E38',
+    backgroundColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   mealLogName: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.text,
   },
   mealLogTime: {
     fontSize: 12,
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     marginTop: 2,
   },
   mealLogRight: {
@@ -80,12 +81,12 @@ const styles = StyleSheet.create({
   mealLogCalories: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: COLORS.text,
     fontVariant: ['tabular-nums'],
   },
   mealLogCalUnit: {
     fontSize: 11,
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     marginTop: 1,
   },
 });

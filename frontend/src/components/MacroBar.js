@@ -13,6 +13,8 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 
+import COLORS from '../theme/colors';
+
 // Each macro bar assumes a rough daily max of 250g for scale.
 // Protein ~50g, Carbs ~300g, Fats ~80g typical — we use 300 as the ceiling.
 const MACRO_MAX_G = 300;
@@ -66,14 +68,14 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     fontWeight: '500',
   },
   barBg: {
     flex: 1,
     height: 7,
     borderRadius: 4,
-    backgroundColor: '#2A2A3E',
+    backgroundColor: COLORS.border,
     overflow: 'hidden',
   },
   barFill: {
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 14,
-    color: '#CCCCDD',
+    color: COLORS.text,
     fontWeight: '600',
     width: 40,
     textAlign: 'right',

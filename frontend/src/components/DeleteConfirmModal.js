@@ -10,7 +10,7 @@ const DeleteConfirmModal = ({ visible, onCancel, onDelete, isDeleting }) => {
     <View style={styles.modalOverlay}>
       <View style={styles.modalContent}>
         <View style={styles.modalIconBg}>
-          <Trash2 color="#FF4D4D" size={32} strokeWidth={2.5} />
+          <Trash2 color="#F43F5E" size={32} strokeWidth={2.5} />
         </View>
         <Text style={styles.modalTitle}>{t('detail.delete_confirm_title')}</Text>
         <Text style={styles.modalSubtitle}>
@@ -49,19 +49,19 @@ const DeleteConfirmModal = ({ visible, onCancel, onDelete, isDeleting }) => {
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.85)',
+    backgroundColor: 'rgba(11, 11, 21, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
   },
   modalContent: {
-    backgroundColor: '#141426',
+    backgroundColor: '#16162A',
     borderRadius: 30,
     padding: 32,
     width: '100%',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: '#1E1E38',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.5,
@@ -72,12 +72,12 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: 'rgba(255, 77, 77, 0.1)',
+    backgroundColor: 'rgba(244, 63, 94, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 77, 77, 0.2)',
+    borderColor: 'rgba(244, 63, 94, 0.2)',
   },
   modalTitle: {
     fontSize: 22,
@@ -100,25 +100,25 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: '#1E1E2E',
+    backgroundColor: '#1E1E38',
     borderRadius: 16,
     paddingVertical: 16,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: '#2D2D44',
   },
   cancelButtonText: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#CCCCDD',
+    color: '#8888AA',
   },
   deleteButton: {
     flex: 1,
-    backgroundColor: '#FF4D4D',
+    backgroundColor: '#F43F5E',
     borderRadius: 16,
     paddingVertical: 16,
     alignItems: 'center',
-    shadowColor: '#FF4D4D',
+    shadowColor: '#F43F5E',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

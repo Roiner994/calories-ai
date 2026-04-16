@@ -7,14 +7,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
-import Animated, {
-  useSharedValue,
-  useAnimatedProps,
-  withTiming,
-  Easing,
-  runOnJS,
+import Animated, { 
+  useSharedValue, 
+  withTiming, 
+  useAnimatedProps, 
+  Easing 
 } from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
+import COLORS from '../theme/colors';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -26,7 +26,8 @@ const CalorieProgressRing = ({
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const progress = Math.min(consumed / goal, 1);
+  const rawProgress = consumed / goal;
+  const progress = Math.min(rawProgress, 1);
 
   // Animated value for the stroke offset (UI thread)
   const animatedProgress = useSharedValue(0);
@@ -61,7 +62,14 @@ const CalorieProgressRing = ({
   const remaining = Math.max(goal - consumed, 0);
   const isOver = consumed > goal;
 
-  const ringColor = isOver ? '#FF6B6B' : '#4A9EFF';
+  // Dynamic Color Logic
+  const getRingColor = () => {
+    if (rawProgress < 0.33) return COLORS.safe;
+    if (rawProgress < 0.66) return COLORS.warning;
+    return COLORS.danger;
+  };
+
+  const ringColor = getRingColor();
   const statusLabel = isOver
     ? `${Math.round(consumed - goal)} over`
     : `${Math.round(remaining)} left`;
@@ -74,7 +82,7 @@ const CalorieProgressRing = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#1E1E38"
+          stroke={COLORS.border}
           strokeWidth={strokeWidth}
           fill="none"
         />

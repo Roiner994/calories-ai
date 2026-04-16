@@ -176,7 +176,7 @@ const DailySummaryScreen = () => {
       {/* Main content */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#6C63FF" />
+          <ActivityIndicator size="large" color="#3E63DD" />
           <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       ) : (
@@ -187,7 +187,7 @@ const DailySummaryScreen = () => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor="#6C63FF"
+              tintColor="#3E63DD"
             />
           }
         >
@@ -198,28 +198,28 @@ const DailySummaryScreen = () => {
               label={t('today.calories')}
               value={summary?.total_calories || 0}
               unit="kcal"
-              color="#FF6B6B"
+              color="#3E63DD"
               icon="🔥"
             />
             <MacroCard
               label={t('today.protein')}
               value={summary?.total_protein_g || 0}
               unit="g"
-              color="#4ECDC4"
+              color="#F43F5E"
               icon="💪"
             />
             <MacroCard
               label={t('today.carbs')}
               value={summary?.total_carbs_g || 0}
               unit="g"
-              color="#FFD93D"
+              color="#F59E0B"
               icon="🌾"
             />
             <MacroCard
               label={t('today.fats')}
               value={summary?.total_fats_g || 0}
               unit="g"
-              color="#C084FC"
+              color="#06B6D4"
               icon="🧈"
             />
           </View>
@@ -270,7 +270,7 @@ const DailySummaryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: '#0B0B15',
   },
   dateArrow: {
     padding: 10,
@@ -280,11 +280,11 @@ const styles = StyleSheet.create({
   },
   dateArrowText: {
     fontSize: 18,
-    color: '#6C63FF',
+    color: '#3E63DD',
     fontWeight: '700',
   },
   dateArrowTextDisabled: {
-    color: '#555577',
+    color: '#8888AA',
   },
   dateLabelContainer: {
     alignItems: 'center',
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   // Meal count
   mealCountBadge: {
     alignSelf: 'center',
-    backgroundColor: '#6C63FF22',
+    backgroundColor: '#3E63DD22',
     borderRadius: 20,
     paddingVertical: 6,
     paddingHorizontal: 16,
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   mealCountText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#6C63FF',
+    color: '#3E63DD',
   },
 
   // Empty state

@@ -73,7 +73,7 @@ const SignupScreen = ({ navigation }) => {
                 focusedField === 'email' && styles.inputContainerFocused,
               ]}
             >
-              <Mail color={focusedField === 'email' ? '#4A9EFF' : '#A0A0B0'} size={20} />
+              <Mail color={focusedField === 'email' ? '#3E63DD' : '#8888AA'} size={20} />
               <TextInput
                 ref={emailRef}
                 style={styles.input}
@@ -99,7 +99,7 @@ const SignupScreen = ({ navigation }) => {
                 focusedField === 'password' && styles.inputContainerFocused,
               ]}
             >
-              <Lock color={focusedField === 'password' ? '#4A9EFF' : '#A0A0B0'} size={20} />
+              <Lock color={focusedField === 'password' ? '#3E63DD' : '#8888AA'} size={20} />
               <TextInput
                 ref={passwordRef}
                 style={styles.input}
@@ -156,7 +156,7 @@ const SignupScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: '#0B0B15',
   },
   keyboardView: {
     flex: 1,
@@ -179,25 +179,25 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#A0A0B0',
+    color: '#8888AA',
     lineHeight: 24,
   },
   form: {
     gap: 16,
   },
   inputContainer: {
-    backgroundColor: '#1A1A2E',
+    backgroundColor: '#16162A',
     borderRadius: 18,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     height: 60,
     borderWidth: 1,
-    borderColor: '#2D2D44',
+    borderColor: '#1E1E38',
   },
   inputContainerFocused: {
-    borderColor: '#4A9EFF',
-    shadowColor: '#4A9EFF',
+    borderColor: '#3E63DD',
+    shadowColor: '#3E63DD',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
@@ -210,13 +210,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   signupButton: {
-    backgroundColor: '#4A9EFF',
+    backgroundColor: '#3E63DD',
     borderRadius: 18,
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 32,
-    shadowColor: '#4A9EFF',
+    shadowColor: '#3E63DD',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -229,6 +229,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '700',
+    letterSpacing: 0.5,
   },
   footer: {
     flexDirection: 'row',
@@ -237,11 +238,11 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   footerText: {
-    color: '#A0A0B0',
+    color: '#8888AA',
     fontSize: 15,
   },
   linkText: {
-    color: '#4A9EFF',
+    color: '#3E63DD',
     fontSize: 15,
     fontWeight: '700',
   },

@@ -113,7 +113,7 @@ const TrendsScreen = ({ navigation }) => {
     return (
       <View style={styles.loadingContainer}>
         <StatusBar style="light" />
-        <ActivityIndicator size="large" color="#4A9EFF" />
+        <ActivityIndicator size="large" color="#3E63DD" />
         <Text style={styles.loadingText}>{t('common.loading')}</Text>
       </View>
     );
@@ -176,7 +176,7 @@ const TrendsScreen = ({ navigation }) => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#4A9EFF"
+            tintColor="#3E63DD"
           />
         }
       >
@@ -212,7 +212,7 @@ const TrendsScreen = ({ navigation }) => {
                           styles.bar,
                           {
                             height: Math.max(barHeight, 4),
-                            backgroundColor: isOverGoal ? '#FF6B6B' : '#4ECDC4',
+                            backgroundColor: isOverGoal ? '#F43F5E' : '#3E63DD',
                           },
                         ]}
                       />
@@ -239,7 +239,7 @@ const TrendsScreen = ({ navigation }) => {
                       styles.compactBar,
                       {
                         height: Math.max(barHeight, 1),
-                        backgroundColor: isOverGoal ? '#FF6B6B' : '#4ECDC4',
+                        backgroundColor: isOverGoal ? '#F43F5E' : '#3E63DD',
                         width: Math.max(chartWidth / chartDays.length - 1, 2),
                       },
                     ]}
@@ -272,21 +272,21 @@ const TrendsScreen = ({ navigation }) => {
         <View style={styles.macroAvgCard}>
           <Text style={styles.macroAvgTitle}>{t('trends.avg_macros')}</Text>
           <View style={styles.macroBarRow}>
-            <View style={[styles.macroSegment, { flex: trendsData?.total_protein_g || 1, backgroundColor: '#4ECDC4' }]} />
-            <View style={[styles.macroSegment, { flex: trendsData?.total_carbs_g || 1, backgroundColor: '#FFD93D' }]} />
-            <View style={[styles.macroSegment, { flex: trendsData?.total_fats_g || 1, backgroundColor: '#C084FC' }]} />
+            <View style={[styles.macroSegment, { flex: trendsData?.total_protein_g || 1, backgroundColor: '#F43F5E' }]} />
+            <View style={[styles.macroSegment, { flex: trendsData?.total_carbs_g || 1, backgroundColor: '#F59E0B' }]} />
+            <View style={[styles.macroSegment, { flex: trendsData?.total_fats_g || 1, backgroundColor: '#06B6D4' }]} />
           </View>
           <View style={styles.macroLegend}>
             <View style={styles.macroLegendItem}>
-              <View style={[styles.macroLegendDot, { backgroundColor: '#4ECDC4' }]} />
+              <View style={[styles.macroLegendDot, { backgroundColor: '#F43F5E' }]} />
               <Text style={styles.macroLegendLabel}>{t('today.protein')}</Text>
             </View>
             <View style={styles.macroLegendItem}>
-              <View style={[styles.macroLegendDot, { backgroundColor: '#FFD93D' }]} />
+              <View style={[styles.macroLegendDot, { backgroundColor: '#F59E0B' }]} />
               <Text style={styles.macroLegendLabel}>{t('today.carbs')}</Text>
             </View>
             <View style={styles.macroLegendItem}>
-              <View style={[styles.macroLegendDot, { backgroundColor: '#C084FC' }]} />
+              <View style={[styles.macroLegendDot, { backgroundColor: '#06B6D4' }]} />
               <Text style={styles.macroLegendLabel}>{t('today.fats')}</Text>
             </View>
           </View>
@@ -315,7 +315,7 @@ const TrendsScreen = ({ navigation }) => {
         {/* Streak indicator */}
         <View style={styles.streakCard}>
           <View style={styles.streakIcon}>
-            <Zap color="#4A9EFF" size={24} fill="#4A9EFF" />
+            <Zap color="#3E63DD" size={24} fill="#3E63DD" />
           </View>
           <View style={styles.streakInfo}>
             <Text style={styles.streakText}>
@@ -338,7 +338,7 @@ const TrendsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: '#0B0B15',
   },
   headerTitle: {
     fontSize: 28,
@@ -349,27 +349,29 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#1E1E2E',
+    backgroundColor: '#16162A',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: '#1E1E38',
   },
   profileDotInner: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#2A2A3E',
+    backgroundColor: '#1E1E38',
   },
 
   // Timeframe
   timeframeContainer: {
     flexDirection: 'row',
     marginHorizontal: 24,
-    backgroundColor: '#14142A',
+    backgroundColor: '#16162A',
     borderRadius: 14,
     padding: 4,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#1E1E38',
   },
   timeframeButton: {
     flex: 1,
@@ -380,8 +382,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   timeframeButtonActive: {
-    backgroundColor: '#4A9EFF18',
-    borderColor: '#4A9EFF40',
+    backgroundColor: '#3E63DD18',
+    borderColor: '#3E63DD40',
   },
   timeframeLabel: {
     fontSize: 14,
@@ -389,7 +391,7 @@ const styles = StyleSheet.create({
     color: '#8888AA',
   },
   timeframeLabelActive: {
-    color: '#4A9EFF',
+    color: '#3E63DD',
     fontWeight: '700',
   },
 
@@ -401,7 +403,7 @@ const styles = StyleSheet.create({
 
   // Average card
   avgCard: {
-    backgroundColor: '#14142A',
+    backgroundColor: '#16162A',
     borderRadius: 20,
     padding: 24,
     marginBottom: 20,
@@ -429,7 +431,7 @@ const styles = StyleSheet.create({
 
   // Chart
   chartContainer: {
-    backgroundColor: '#14142A',
+    backgroundColor: '#16162A',
     borderRadius: 20,
     padding: 20,
     marginBottom: 20,
@@ -497,7 +499,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#14142A',
+    backgroundColor: '#16162A',
     borderRadius: 18,
     padding: 20,
     borderWidth: 1,
@@ -524,7 +526,7 @@ const styles = StyleSheet.create({
 
   // Macro averages
   macroAvgCard: {
-    backgroundColor: '#14142A',
+    backgroundColor: '#16162A',
     borderRadius: 20,
     padding: 20,
     marginBottom: 20,
@@ -586,7 +588,7 @@ const styles = StyleSheet.create({
   streakCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#14142A',
+    backgroundColor: '#16162A',
     borderRadius: 18,
     padding: 18,
     gap: 14,
@@ -597,17 +599,17 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#1E1E2E',
+    backgroundColor: '#16162A',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: '#1E1E38',
   },
   streakIcon: {
     width: 48,
     height: 48,
     borderRadius: 16,
-    backgroundColor: '#4A9EFF15',
+    backgroundColor: '#3E63DD15',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -630,7 +632,7 @@ const styles = StyleSheet.create({
   // Loading
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: '#0B0B15',
     justifyContent: 'center',
     alignItems: 'center',
   },

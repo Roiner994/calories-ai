@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { Check } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
+import COLORS from '../theme/colors';
 
 const SuccessModal = ({ visible, onHome }) => {
   const { t } = useTranslation();
@@ -11,7 +12,7 @@ const SuccessModal = ({ visible, onHome }) => {
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <View style={styles.modalIconBg}>
-            <Check color="#FFFFFF" size={40} strokeWidth={3} />
+            <Check color={COLORS.text} size={40} strokeWidth={3} />
           </View>
           <Text style={styles.modalTitle}>{t('modal.meal_logged')}</Text>
           <Text style={styles.modalSubtitle}>
@@ -30,19 +31,19 @@ const SuccessModal = ({ visible, onHome }) => {
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.85)',
+    backgroundColor: 'rgba(11, 11, 21, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
   },
   modalContent: {
-    backgroundColor: '#1A1A2E',
+    backgroundColor: COLORS.surface,
     borderRadius: 30,
     padding: 32,
     width: '100%',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: COLORS.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.5,
@@ -53,11 +54,11 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#10B981',
+    backgroundColor: COLORS.success,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    shadowColor: '#10B981',
+    shadowColor: COLORS.success,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
@@ -66,26 +67,26 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: COLORS.text,
     marginBottom: 10,
     textAlign: 'center',
   },
   modalSubtitle: {
     fontSize: 15,
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 30,
     paddingHorizontal: 10,
   },
   modalButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: COLORS.primary,
     borderRadius: 16,
     paddingVertical: 16,
     paddingHorizontal: 32,
     width: '100%',
     alignItems: 'center',
-    shadowColor: '#3B82F6',
+    shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
   modalButtonText: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: COLORS.text,
     letterSpacing: 0.5,
   },
 });

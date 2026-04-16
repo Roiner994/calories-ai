@@ -25,6 +25,8 @@ import ScreenHeader from '../components/ScreenHeader';
 import { useTranslation } from 'react-i18next';
 import { useDate } from '../context/DateContext';
 
+import COLORS from '../theme/colors';
+
 const ManualEntryScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const { selectedDate } = useDate();
@@ -104,7 +106,7 @@ const ManualEntryScreen = ({ navigation }) => {
           ref={mealNameRef}
           style={styles.input}
           placeholder="e.g., Chicken Salad"
-          placeholderTextColor="#555577"
+          placeholderTextColor={COLORS.textMuted}
           value={mealName}
           onChangeText={setMealName}
           autoFocus
@@ -118,7 +120,7 @@ const ManualEntryScreen = ({ navigation }) => {
           ref={caloriesRef}
           style={styles.input}
           placeholder="e.g., 450"
-          placeholderTextColor="#555577"
+          placeholderTextColor={COLORS.textMuted}
           value={calories}
           onChangeText={setCalories}
           keyboardType="numeric"
@@ -135,7 +137,7 @@ const ManualEntryScreen = ({ navigation }) => {
               ref={proteinRef}
               style={styles.input}
               placeholder="0"
-              placeholderTextColor="#555577"
+              placeholderTextColor={COLORS.textMuted}
               value={protein}
               onChangeText={setProtein}
               keyboardType="numeric"
@@ -149,7 +151,7 @@ const ManualEntryScreen = ({ navigation }) => {
               ref={carbsRef}
               style={styles.input}
               placeholder="0"
-              placeholderTextColor="#555577"
+              placeholderTextColor={COLORS.textMuted}
               value={carbs}
               onChangeText={setCarbs}
               keyboardType="numeric"
@@ -163,7 +165,7 @@ const ManualEntryScreen = ({ navigation }) => {
               ref={fatsRef}
               style={styles.input}
               placeholder="0"
-              placeholderTextColor="#555577"
+              placeholderTextColor={COLORS.textMuted}
               value={fats}
               onChangeText={setFats}
               keyboardType="numeric"
@@ -194,7 +196,7 @@ const ManualEntryScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
   },
   scrollContent: {
     padding: 24,
@@ -204,38 +206,38 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: COLORS.text,
     marginBottom: 6,
     marginTop: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     marginBottom: 28,
   },
 
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#CCCCDD',
+    color: COLORS.textSecondary,
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#1E1E2E',
+    backgroundColor: COLORS.surface,
     borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
-    color: '#FFFFFF',
+    color: COLORS.text,
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: COLORS.border,
     marginBottom: 18,
   },
 
   sectionLabel: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: COLORS.text,
     marginBottom: 14,
     marginTop: 8,
   },
@@ -250,30 +252,31 @@ const styles = StyleSheet.create({
   macroLabel: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     marginBottom: 6,
   },
 
   saveButton: {
-    backgroundColor: '#4ECDC4',
+    backgroundColor: COLORS.primary,
     borderRadius: 16,
     paddingVertical: 18,
     alignItems: 'center',
     marginTop: 24,
-    shadowColor: '#4ECDC4',
+    shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
     elevation: 8,
   },
   saveButtonDisabled: {
-    backgroundColor: '#2A9D8F',
+    backgroundColor: COLORS.border,
     shadowOpacity: 0,
   },
   saveButtonText: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: COLORS.text,
+    letterSpacing: 0.5,
   },
 });
 

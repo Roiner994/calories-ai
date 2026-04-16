@@ -28,7 +28,7 @@ const DeconstructionCard = ({ item, onDelete }) => {
           style={styles.deleteButton}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Trash2 color="#FF4D4D" size={16} />
+          <Trash2 color="#F43F5E" size={16} />
         </TouchableOpacity>
       )}
     </View>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#2A2A3E',
+    borderBottomColor: '#1E1E38',
   },
   deconLeft: {
     flex: 1,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   deconPortion: {
     fontSize: 12,
-    color: '#555577',
+    color: '#8888AA',
   },
   deconRight: {
     alignItems: 'flex-end',
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   deconMacros: {
     fontSize: 12,
-    color: '#555577',
+    color: '#8888AA',
   },
   deleteButton: {
     paddingLeft: 12,

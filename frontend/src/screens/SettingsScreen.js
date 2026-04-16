@@ -113,7 +113,7 @@ const SettingsScreen = ({ navigation }) => {
     return (
       <View style={styles.loadingContainer}>
         <StatusBar style="light" />
-        <ActivityIndicator size="large" color="#4A9EFF" />
+        <ActivityIndicator size="large" color="#3E63DD" />
       </View>
     );
   }
@@ -230,7 +230,7 @@ const SettingsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: '#0B0B15',
   },
   content: {
     padding: 24,
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   },
 
   currentGoalCard: {
-    backgroundColor: '#14142A',
+    backgroundColor: '#16162A',
     borderRadius: 20,
     padding: 28,
     alignItems: 'center',
@@ -272,14 +272,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#1E1E2E',
+    backgroundColor: '#16162A',
     borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 16,
     fontSize: 20,
     color: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: '#1E1E38',
     marginBottom: 18,
     textAlign: 'center',
     fontWeight: '700',
@@ -296,14 +296,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: '#1E1E2E',
+    backgroundColor: '#16162A',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: '#1E1E38',
   },
   presetButtonActive: {
-    borderColor: '#4A9EFF',
-    backgroundColor: '#4A9EFF15',
+    borderColor: '#3E63DD',
+    backgroundColor: '#3E63DD15',
   },
   presetText: {
     fontSize: 13,
@@ -311,15 +311,15 @@ const styles = StyleSheet.create({
     color: '#8888AA',
   },
   presetTextActive: {
-    color: '#4A9EFF',
+    color: '#3E63DD',
   },
 
   saveButton: {
-    backgroundColor: '#4A9EFF',
+    backgroundColor: '#3E63DD',
     borderRadius: 16,
     paddingVertical: 18,
     alignItems: 'center',
-    shadowColor: '#4A9EFF',
+    shadowColor: '#3E63DD',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
@@ -333,11 +333,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '800',
     color: '#FFFFFF',
+    letterSpacing: 0.5,
   },
 
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: '#0B0B15',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -345,15 +346,15 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingVertical: 16,
     borderRadius: 16,
-    backgroundColor: '#1E1E2E',
+    backgroundColor: '#16162A',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#FF4A4A30',
+    borderColor: '#F43F5E30',
   },
   signOutButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#FF4A4A',
+    color: '#F43F5E',
   },
 });
 

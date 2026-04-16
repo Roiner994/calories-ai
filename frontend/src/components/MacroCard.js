@@ -17,7 +17,7 @@ import { View, Text, StyleSheet } from 'react-native';
  * @param {string} props.color   - The accent color for this card
  * @param {string} props.icon    - Emoji icon for visual flair
  */
-const MacroCard = ({ label, value, unit = 'g', color = '#6C63FF', icon = '🔥' }) => {
+const MacroCard = ({ label, value, unit = 'g', color = '#3E63DD', icon = '🔥' }) => {
   return (
     <View style={[styles.card, { borderLeftColor: color }]}>
       {/* Icon */}
@@ -37,7 +37,7 @@ const MacroCard = ({ label, value, unit = 'g', color = '#6C63FF', icon = '🔥' 
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#1E1E2E',
+    backgroundColor: '#16162A',
     borderRadius: 16,
     borderLeftWidth: 4,
     paddingVertical: 16,
@@ -47,12 +47,8 @@ const styles = StyleSheet.create({
     minWidth: 80,
     flex: 1,
     marginHorizontal: 4,
-    // Subtle shadow for depth
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 5,
+    borderWidth: 1,
+    borderColor: '#1E1E38',
   },
   icon: {
     fontSize: 22,
@@ -71,7 +67,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    color: '#AAAACC',
+    color: '#8888AA',
     marginTop: 4,
     fontWeight: '500',
   },

@@ -29,6 +29,8 @@ import { getMealDetail, deleteMeal, updateMeal } from '../services/api';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import { useTranslation } from 'react-i18next';
 
+import COLORS from '../theme/colors';
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const MealDetailScreen = ({ route, navigation }) => {
@@ -123,7 +125,7 @@ const MealDetailScreen = ({ route, navigation }) => {
         <View style={styles.infoSection}>
           <View style={styles.mealHeader}>
             <View style={styles.iconContainer}>
-              <Utensils color="#8888AA" size={28} strokeWidth={1.8} />
+              <Utensils color={COLORS.textSecondary} size={28} strokeWidth={1.8} />
             </View>
             <View style={{ flex: 1 }}>
               {editMode ? (
@@ -132,16 +134,16 @@ const MealDetailScreen = ({ route, navigation }) => {
                   value={editedName}
                   onChangeText={setEditedName}
                   placeholder="Meal Name"
-                  placeholderTextColor="#4A4A6A"
+                  placeholderTextColor={COLORS.textMuted}
                 />
               ) : (
                 <Text style={styles.mealName} numberOfLines={2}>{meal.meal_name}</Text>
               )}
               <View style={styles.timeRow}>
-                <Clock size={14} color="#8888AA" style={{ marginRight: 4 }} />
+                <Clock size={14} color={COLORS.textSecondary} style={{ marginRight: 4 }} />
                 <Text style={styles.timeText}>{timeLabel}</Text>
                 <View style={styles.dot} />
-                <CalendarIcon size={14} color="#8888AA" style={{ marginRight: 4, marginLeft: 4 }} />
+                <CalendarIcon size={14} color={COLORS.textSecondary} style={{ marginRight: 4, marginLeft: 4 }} />
                 <Text style={styles.timeText}>{dateLabel}</Text>
               </View>
             </View>
@@ -180,7 +182,7 @@ const MealDetailScreen = ({ route, navigation }) => {
         {editMode && (
           <View style={styles.macroInputsRow}>
             <View style={styles.macroInputItem}>
-              <Text style={[styles.macroLabel, { color: '#FF4D4D' }]}>{t('detail.pro_short')}</Text>
+              <Text style={[styles.macroLabel, { color: COLORS.protein }]}>{t('detail.pro_short')}</Text>
               <TextInput
                 style={styles.macroTextInput}
                 value={editedProtein}
@@ -189,7 +191,7 @@ const MealDetailScreen = ({ route, navigation }) => {
               />
             </View>
             <View style={styles.macroInputItem}>
-              <Text style={[styles.macroLabel, { color: '#4ADE80' }]}>{t('detail.car_short')}</Text>
+              <Text style={[styles.macroLabel, { color: COLORS.carbs }]}>{t('detail.car_short')}</Text>
               <TextInput
                 style={styles.macroTextInput}
                 value={editedCarbs}
@@ -198,7 +200,7 @@ const MealDetailScreen = ({ route, navigation }) => {
               />
             </View>
             <View style={styles.macroInputItem}>
-              <Text style={[styles.macroLabel, { color: '#FACC15' }]}>{t('detail.fat_short')}</Text>
+              <Text style={[styles.macroLabel, { color: COLORS.fats }]}>{t('detail.fat_short')}</Text>
               <TextInput
                 style={styles.macroTextInput}
                 value={editedFats}
@@ -212,7 +214,7 @@ const MealDetailScreen = ({ route, navigation }) => {
         {/* Ingredients / Deconstruction */}
         {loading ? (
           <View style={styles.loaderContainer}>
-            <ActivityIndicator color="#4A9EFF" />
+            <ActivityIndicator color={COLORS.primary} />
             <Text style={styles.loaderText}>{t('common.loading')}</Text>
           </View>
         ) : meal.ingredients && meal.ingredients.length > 0 ? (
@@ -236,7 +238,7 @@ const MealDetailScreen = ({ route, navigation }) => {
                     onChangeText={setEditedNotes}
                     multiline
                     placeholder={t('detail.add_notes')}
-                    placeholderTextColor="#4A4A6A"
+                    placeholderTextColor={COLORS.textMuted}
                   />
                 ) : (
                   <Text style={styles.notesBody}>{meal.ai_notes}</Text>
@@ -252,10 +254,10 @@ const MealDetailScreen = ({ route, navigation }) => {
           activeOpacity={0.8}
         >
           {isDeleting ? (
-            <ActivityIndicator color="#FFFFFF" size="small" />
+            <ActivityIndicator color={COLORS.text} size="small" />
           ) : (
             <>
-              <Trash2 color="#FFFFFF" size={18} style={{ marginRight: 8 }} />
+              <Trash2 color={COLORS.text} size={18} style={{ marginRight: 8 }} />
               <Text style={styles.deleteButtonText}>{t('common.delete')}</Text>
             </>
           )}
@@ -285,7 +287,7 @@ const MealDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
   },
   editButton: {
     width: 32,
@@ -311,12 +313,12 @@ const styles = StyleSheet.create({
   infoSection: {
     paddingHorizontal: 20,
     paddingVertical: 24,
-    backgroundColor: '#14142A',
+    backgroundColor: COLORS.surface,
     marginHorizontal: 16,
     borderRadius: 24,
     marginTop: 10,
     borderWidth: 1,
-    borderColor: '#1E1E38',
+    borderColor: COLORS.border,
     alignItems: 'center',
   },
   mealHeader: {
@@ -329,7 +331,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 20,
-    backgroundColor: '#1E1E38',
+    backgroundColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 16,
@@ -340,16 +342,16 @@ const styles = StyleSheet.create({
   mealName: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: COLORS.text,
     marginBottom: 4,
   },
   nameInput: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: COLORS.text,
     marginBottom: 4,
     borderBottomWidth: 1,
-    borderBottomColor: '#4A9EFF',
+    borderBottomColor: COLORS.primary,
     paddingVertical: 2,
     minWidth: 150,
   },
@@ -359,14 +361,14 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 13,
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     fontWeight: '500',
   },
   dot: {
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: '#4A4A6A',
+    backgroundColor: COLORS.border,
     marginHorizontal: 8,
   },
   caloriesBox: {
@@ -376,12 +378,12 @@ const styles = StyleSheet.create({
   caloriesNumber: {
     fontSize: 48,
     fontWeight: '900',
-    color: '#FFFFFF',
+    color: COLORS.text,
   },
   caloriesLabel: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#555577',
+    color: COLORS.textMuted,
     letterSpacing: 1.5,
     marginTop: -4,
   },
@@ -393,16 +395,16 @@ const styles = StyleSheet.create({
   caloriesInput: {
     fontSize: 48,
     fontWeight: '900',
-    color: '#FFFFFF',
+    color: COLORS.text,
     borderBottomWidth: 2,
-    borderBottomColor: '#4A9EFF',
+    borderBottomColor: COLORS.primary,
     minWidth: 100,
     textAlign: 'center',
   },
   caloriesInputLabel: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#555577',
+    color: COLORS.textMuted,
     marginLeft: 8,
     marginBottom: 10,
   },
@@ -414,7 +416,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: COLORS.text,
   },
   macroInputsRow: {
     flexDirection: 'row',
@@ -435,48 +437,48 @@ const styles = StyleSheet.create({
   macroTextInput: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: COLORS.text,
     borderBottomWidth: 1,
-    borderBottomColor: '#4A4A6A',
+    borderBottomColor: COLORS.border,
     width: '80%',
     textAlign: 'center',
     paddingVertical: 5,
   },
   deconList: {
-    backgroundColor: '#1A1A2E',
+    backgroundColor: COLORS.surface,
     marginHorizontal: 16,
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: COLORS.border,
   },
   notesContainer: {
-    backgroundColor: 'rgba(59, 130, 246, 0.05)',
+    backgroundColor: COLORS.primary + '10',
     marginHorizontal: 16,
     marginTop: 32,
     padding: 20,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.1)',
+    borderColor: COLORS.primary + '30',
   },
   notesTitle: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#3B82F6',
+    color: COLORS.primary,
     letterSpacing: 1,
     textTransform: 'uppercase',
     marginBottom: 8,
   },
   notesBody: {
     fontSize: 14,
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     lineHeight: 22,
   },
   notesInput: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: COLORS.text,
     lineHeight: 22,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: COLORS.text + '05',
     borderRadius: 8,
     padding: 12,
     marginTop: 8,
@@ -485,17 +487,17 @@ const styles = StyleSheet.create({
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: '#0D0D1A',
+    backgroundColor: COLORS.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
   errorText: {
-    color: '#FFFFFF',
+    color: COLORS.text,
     fontSize: 18,
     marginBottom: 10,
   },
   backLink: {
-    color: '#4A9EFF',
+    color: COLORS.primary,
     fontSize: 16,
   },
   loaderContainer: {
@@ -504,7 +506,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   loaderText: {
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     fontSize: 13,
     marginTop: 8,
   },
@@ -513,27 +515,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   noIngredientsText: {
-    color: '#555577',
+    color: COLORS.textMuted,
     fontSize: 14,
     fontStyle: 'italic',
   },
   deleteButton: {
     flexDirection: 'row',
-    backgroundColor: '#FF4D4D',
+    backgroundColor: COLORS.error,
     marginHorizontal: 24,
     marginTop: 40,
     paddingVertical: 18,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#FF4D4D',
+    shadowColor: COLORS.error,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 5,
   },
   deleteButtonText: {
-    color: '#FFFFFF',
+    color: COLORS.text,
     fontSize: 16,
     fontWeight: '800',
     letterSpacing: 0.5,

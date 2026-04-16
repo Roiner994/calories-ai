@@ -9,6 +9,8 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Modal, Dimensions, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import COLORS from '../theme/colors';
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const LoadingOverlay = ({ visible, message }) => {
@@ -33,7 +35,7 @@ const LoadingOverlay = ({ visible, message }) => {
         <View style={styles.card}>
           <View style={styles.iconContainer}>
             <Animated.View style={[styles.glowCircle, { transform: [{ scale: pulseAnim }] }]} />
-            <ActivityIndicator size="large" color="#FFFFFF" style={styles.spinner} />
+            <ActivityIndicator size="large" color={COLORS.primary} style={styles.spinner} />
           </View>
           <Text style={styles.message}>{message || t('preview.analyzing')}</Text>
           <Text style={styles.subtext}>{t('preview.analyzing_sub')}</Text>
@@ -51,16 +53,16 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(13, 13, 26, 0.85)',
+    backgroundColor: 'rgba(11, 11, 21, 0.9)',
   },
   card: {
-    backgroundColor: '#1A1A2E',
+    backgroundColor: COLORS.surface,
     borderRadius: 24,
     padding: 32,
     alignItems: 'center',
     width: '80%',
     borderWidth: 1,
-    borderColor: '#2A2A3E',
+    borderColor: COLORS.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.5,
@@ -73,18 +75,18 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: COLORS.text,
     textAlign: 'center',
     marginBottom: 8,
   },
   subtext: {
     fontSize: 14,
-    color: '#8888AA',
+    color: COLORS.textSecondary,
     textAlign: 'center',
   },
   glowCircle: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(74, 158, 255, 0.2)',
+    backgroundColor: COLORS.primary + '33',
     borderRadius: 30,
   },
   spinner: {
