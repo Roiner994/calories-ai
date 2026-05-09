@@ -1,8 +1,7 @@
 fastapi
 uvicorn
-supabase
 python-dotenv
 google-genai
 python-multipart
 pydantic-settings
-postgrest
+firebase-admin

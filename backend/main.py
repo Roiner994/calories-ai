@@ -4,7 +4,7 @@ main.py — VisionMacro FastAPI Application.
 This is the entry point for the backend API. It exposes endpoints for:
   1. POST /analyze-meal  — Receives a food image, analyzes it with Gemini,
                            fetches macros from Edamam, and returns the result.
-  2. POST /log-meal      — Saves an analyzed meal to the Supabase database.
+  2. POST /log-meal      — Saves an analyzed meal to the database.
   3. POST /log-meal-manual — Saves a manually entered meal (no image).
   4. GET  /daily-summary — Aggregates all meals logged for a given date.
   5. GET  /settings      — Fetches the user's calorie goal.
@@ -42,7 +42,7 @@ from core.schemas import (
 )
 from services.gemini_service import analyze_food_image, refine_food_analysis
 from services.nutrition_service import calculate_total_macros
-from services.supabase_service import (
+from services.firebase_service import (
     save_meal,
     get_daily_summary,
     get_meal_detail,
@@ -51,7 +51,7 @@ from services.supabase_service import (
     get_user_settings,
     update_user_settings,
     get_trends_data,
-    _get_client,
+    verify_id_token,
 )
 
 
@@ -61,46 +61,16 @@ from services.supabase_service import (
 
 security = HTTPBearer()
 
-import time
-
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
-    """Verifies the Supabase JWT and returns the user's UUID. Includes retry logic for flakiness."""
+    """Verifies the Firebase ID token and returns the user's UID."""
     token = credentials.credentials
-    max_retries = 5  # Increased retries
-    retry_delay = 1.0 # start with 1s
-    
-    last_error = None
-    for attempt in range(max_retries):
-        try:
-            client = _get_client()
-            # Note: We use a basic try/except here as the SDK method can block or raise
-            user_response = client.auth.get_user(token)
-            
-            if not user_response or not user_response.user:
-                raise HTTPException(status_code=401, detail="Invalid authentication credentials")
-                
-            return user_response.user.id
-            
-        except HTTPException:
-            raise
-        except Exception as e:
-            last_error = e
-            error_str = str(e).lower()
-            # If it's a timeout or connection issue, retry
-            is_transient = any(kw in error_str for kw in ["timed out", "timeout", "connection", "network", "remote end"])
-            
-            if attempt < max_retries - 1 and is_transient:
-                print(f"Auth attempt {attempt+1} failed ({type(e).__name__}), retrying in {retry_delay}s...")
-                time.sleep(retry_delay)
-                retry_delay *= 1.5 # Moderate backoff
-                continue
-            
-            # If we're here, we've exhausted retries or it's a non-transient error
-            print(f"Auth FINAL ERROR after {attempt+1} attempts: {str(e)}")
-            raise HTTPException(
-                status_code=401, 
-                detail=f"Authentication failed after {attempt+1} attempts. Please check your connection. Error: {str(e)}"
-            )
+    try:
+        return verify_id_token(token)
+    except Exception as e:
+        raise HTTPException(
+            status_code=401,
+            detail=f"Invalid authentication credentials: {str(e)}",
+        )
 
 
 settings = get_settings()
@@ -309,7 +279,7 @@ async def log_meal(
 ):
     """
     Receives the analyzed meal data from the frontend and persists it
-    to the Supabase 'meal_logs' table.
+    to the user's meal log collection.
     """
     try:
         # Convert ingredients to plain dicts for JSON storage

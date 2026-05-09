@@ -41,9 +41,7 @@ const SignupScreen = ({ navigation }) => {
     if (error) {
       Alert.alert(t('auth.signup_failed'), error.message);
     } else {
-      Alert.alert(t('common.success'), t('auth.signup_success'), [
-        { text: t('common.ok'), onPress: () => navigation.navigate('Login') },
-      ]);
+      Alert.alert(t('common.success'), t('auth.signup_success'));
     }
   };
 

@@ -6,7 +6,7 @@
  */
 
 import axios from 'axios';
-import { supabase } from './supabaseClient';
+import { getCurrentIdToken } from './firebaseClient';
 
 // ---------------------------------------------------------------------------
 // Base URL Configuration
@@ -27,13 +27,12 @@ const apiClient = axios.create({
   },
 });
 
-// Add interceptor to inject Authorization header with Supabase JWT
+// Add interceptor to inject Authorization header with Firebase ID token
 apiClient.interceptors.request.use(async (config) => {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session && session.access_token) {
-      // console.log(`API Request: ${config.method?.toUpperCase()} ${config.url} [Token Present]`);
-      config.headers.Authorization = `Bearer ${session.access_token}`;
+    const token = await getCurrentIdToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     } else {
       console.warn(`API Request: ${config.method?.toUpperCase()} ${config.url} [NO TOKEN FOUND]`);
     }
@@ -86,7 +85,7 @@ export const refineMeal = async (refineData) => {
 
 
 /**
- * Saves an analyzed meal to the Supabase database via the backend.
+ * Saves an analyzed meal via the backend.
  *
  * @param {Object} mealData - The meal data matching LogMealRequest schema.
  * @param {string} mealData.meal_name - Name for the meal (e.g., "Lunch").

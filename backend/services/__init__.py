@@ -1,1 +1,1 @@
-# services package — OpenAI, Nutrition, and Supabase integrations.
+# services package — OpenAI, Nutrition, and Firebase integrations.

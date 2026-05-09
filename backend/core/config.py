@@ -23,9 +23,9 @@ class Settings(BaseSettings):
     edamam_app_id: str = ""
     edamam_app_key: str = ""
 
-    # --- Supabase ---
-    supabase_url: str = ""
-    supabase_key: str = ""  # Use the Service Role Key (secret) for server-side bypass of RLS
+    # --- Firebase ---
+    google_application_credentials: str = ""
+    firebase_service_account_json: str = ""
 
     # --- App ---
     app_name: str = "VisionMacro API"

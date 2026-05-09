@@ -1,5 +1,11 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { supabase } from '../services/supabaseClient';
+import {
+  auth,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
+} from '../services/firebaseClient';
 
 const AuthContext = createContext();
 
@@ -9,24 +15,24 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check active session on mount
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const accessToken = await firebaseUser.getIdToken();
+        const firebaseSession = {
+          user: firebaseUser,
+          access_token: accessToken,
+        };
+        setSession(firebaseSession);
+        setUser(firebaseUser);
+      } else {
+        setSession(null);
+        setUser(null);
+      }
       setLoading(false);
     });
 
-    // Listen for auth changes (login, logout, token refresh)
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
-
     return () => {
-      authListener.subscription.unsubscribe();
+      unsubscribe();
     };
   }, []);
 
@@ -35,13 +41,48 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     signIn: async (email, password) => {
-      return await supabase.auth.signInWithPassword({ email, password });
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const accessToken = await userCredential.user.getIdToken();
+        return {
+          data: {
+            user: userCredential.user,
+            session: {
+              user: userCredential.user,
+              access_token: accessToken,
+            },
+          },
+          error: null,
+        };
+      } catch (error) {
+        return { data: null, error };
+      }
     },
     signUp: async (email, password) => {
-      return await supabase.auth.signUp({ email, password });
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const accessToken = await userCredential.user.getIdToken();
+        return {
+          data: {
+            user: userCredential.user,
+            session: {
+              user: userCredential.user,
+              access_token: accessToken,
+            },
+          },
+          error: null,
+        };
+      } catch (error) {
+        return { data: null, error };
+      }
     },
     signOut: async () => {
-      return await supabase.auth.signOut();
+      try {
+        await firebaseSignOut(auth);
+        return { error: null };
+      } catch (error) {
+        return { error };
+      }
     },
   };
 

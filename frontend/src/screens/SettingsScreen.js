@@ -4,7 +4,7 @@
  * Features:
  *   - Current goal display
  *   - Input to set a new calorie goal
- *   - Save to backend/Supabase
+ *   - Save to backend/Firebase
  */
 
 import React, { useState, useEffect } from 'react';
