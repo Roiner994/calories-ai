@@ -21,7 +21,7 @@ const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 60000, // 60 seconds — image analysis can take a while
+  timeout: 120000, // 120 seconds — image analysis can take a while
   headers: {
     'Accept': 'application/json',
   },
